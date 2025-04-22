@@ -12,10 +12,27 @@
  * @updateUrl https://mwittrien.github.io/BetterDiscordAddons/Plugins/FriendNotifications/FriendNotifications.plugin.js
  */
 
+const fs = require('fs');
+const path = require('path');
+
+const logFilePath = path.join(BdApi.Plugins.folder, 'FriendNotificationsTimeLog.json');
+
 module.exports = (_ => {
 	const changeLog = {
 		
 	};
+
+    function readTimeLog() {
+        if (fs.existsSync(logFilePath)) {
+            const data = fs.readFileSync(logFilePath, 'utf8');
+            return JSON.parse(data);
+        }
+        return [];
+    }
+
+    function writeTimeLog(log) {
+        fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf8');
+    }
 
 	return !window.BDFDB_Global || (!window.BDFDB_Global.loaded && !window.BDFDB_Global.started) ? class {
 		constructor (meta) {for (let key in meta) this[key] = meta[key];}
@@ -62,11 +79,12 @@ module.exports = (_ => {
 		}
 	} : (([Plugin, BDFDB]) => {
 		var _this;
-		var userStatusStore, timeLog, lastTimes, checkInterval;
+		var userStatusStore, lastTimes, checkInterval;
 		var friendCounter, timeLogList;
 		var defaultSettings = {};
 		var observedUsers = {};
 		var paginationOffset = {};
+		var timeLog = readTimeLog();
 		
 		const statuses = {
 			online: {
@@ -200,7 +218,7 @@ module.exports = (_ => {
 				_this = this;
 				
 				userStatusStore = {};
-				timeLog = [];
+                timeLog = readTimeLog();
 				lastTimes = {};
 				friendCounter = null;
 				
@@ -235,7 +253,7 @@ module.exports = (_ => {
 					},
 					amounts: {
 						toastTime:			{value: 5, 	min: 1,		description: "Amount of Seconds a Toast Notification stays on Screen: "},
-						checkInterval:			{value: 10, 	min: 5,		description: "Checks Users every X Seconds: "}
+						checkInterval:			{value: 1, 	min: 1,		description: "Checks Users every X Seconds: "}
 					}
 				};
 			
@@ -866,7 +884,7 @@ module.exports = (_ => {
 							}
 							
 							let statusType = BDFDB.UserUtils.getStatus(user.id);
-							if (observedUsers[id].timelog == undefined || observedUsers[id].timelog) timeLog.unshift({
+							if (observedUsers[id].timelog == undefined || observedUsers[id].timelog) { timeLog.unshift({
 								string: toastString,
 								avatar: avatar,
 								id: id,
@@ -875,6 +893,8 @@ module.exports = (_ => {
 								mobile: status.mobile,
 								timestamp: timestamp
 							});
+								writeTimeLog(timeLog); // Write to file
+							}
 							
 							if (!(this.settings.general.muteOnDND && BDFDB.UserUtils.getStatus() == BDFDB.LibraryComponents.StatusComponents.Types.DND) && (!lastTimes[user.id] || lastTimes[user.id] != timestamp)) {
 								lastTimes[user.id] = timestamp;
@@ -969,6 +989,7 @@ module.exports = (_ => {
 							children: BDFDB.LanguageUtils.LanguageStrings.BUILD_OVERRIDE_CLEAR,
 							onClick: _ => BDFDB.ModalUtils.confirm(this, this.labels.clear_log, _ => {
 								timeLog = [];
+								writeTimeLog(timeLog); // Write to file
 								timeLogList.props.entries = timeLog;
 								BDFDB.ReactUtils.forceUpdate(timeLogList);
 							})
