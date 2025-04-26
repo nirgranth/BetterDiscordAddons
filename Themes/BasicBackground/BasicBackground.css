@@ -900,7 +900,7 @@ body:has(#app-mount)::after {
 	overflow: hidden;
 }
 .panels_c48ade > * {
-	position: relative;
+	position: relative !important;
 }
 .panels_c48ade > *::before,
 .panels_c48ade > *::after {
@@ -910,6 +910,9 @@ body:has(#app-mount)::after {
 	bottom: 0;
 	right: 0;
 	left: 0;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
 	pointer-events: none;
 	z-index: -2;
 }
