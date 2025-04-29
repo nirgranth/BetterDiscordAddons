@@ -229,7 +229,7 @@ module.exports = (_ => {
 						addOnlineCount:			{value: true, 			description: "Adds an Online Friend Counter to the Server List (Click to open Time Log)"},
 						showDiscriminator:		{value: false, 			description: "Adds the User Discriminator"},
 						showTimestamp:			{value: false, 			description: "Adds the Timestamp"},
-						muteOnDND:			{value: false, 			description: "Does not notify you when you are in DnD Status"},
+						muteOnDND:				{value: false, 			description: "Does not notify you"},
 						openOnClick:			{value: false, 			description: "Opens the DM when you click a Notification"}
 					},
 					choices: {
@@ -242,7 +242,7 @@ module.exports = (_ => {
 						playing: 			{value: "$user started playing '$game'"},
 						listening: 			{value: "$user started listening to '$song'"},
 						streaming: 			{value: "$user started streaming '$game'"},
-						screensharing: 			{value: "$user started screensharing"},
+						screensharing: 		{value: "$user started screensharing"},
 						offline: 			{value: "$user changed status to '$status'"},
 						login: 				{value: "$user just logged in '$status'"},
 						custom: 			{value: "$user changed status to '$custom'"}
@@ -253,7 +253,7 @@ module.exports = (_ => {
 					},
 					amounts: {
 						toastTime:			{value: 5, 	min: 1,		description: "Amount of Seconds a Toast Notification stays on Screen: "},
-						checkInterval:			{value: 1, 	min: 1,		description: "Checks Users every X Seconds: "}
+						checkInterval:			{value: 5, 	min: 1,		description: "Checks Users every X Seconds: "}
 					}
 				};
 			
@@ -896,7 +896,7 @@ module.exports = (_ => {
 								writeTimeLog(timeLog); // Write to file
 							}
 							
-							if (!(this.settings.general.muteOnDND && BDFDB.UserUtils.getStatus() == BDFDB.LibraryComponents.StatusComponents.Types.DND) && (!lastTimes[user.id] || lastTimes[user.id] != timestamp)) {
+							if (!(this.settings.general.muteOnDND) && (!lastTimes[user.id] || lastTimes[user.id] != timestamp)) {
 								lastTimes[user.id] = timestamp;
 								
 								let openChannel = _ => {
