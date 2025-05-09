@@ -1,0 +1,11 @@
+**/**/*.js
+**/**/*.json
+**/**/*.ts
+**/**/*.css
+**/**/*.md
+**/**/**/*.gif
+**/**/**/*.jpg
+**/**/**/*.png
+**/**/**/*.svg
+!**/**/FriendNotifications.plugin.js
+
