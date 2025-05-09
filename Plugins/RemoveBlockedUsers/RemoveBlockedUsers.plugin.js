@@ -2,7 +2,7 @@
  * @name RemoveBlockedUsers
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.7.5
+ * @version 1.7.8
  * @description Removes blocked/ignored Messages/Users
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -14,9 +14,7 @@
 
 module.exports = (_ => {
 	const changeLog = {
-		"improved": {
-			"Blocked/Ignored/Spammers": "Added option to also hide ignored Users or Messages from Spammers"
-		}
+		
 	};
 
 	return !window.BDFDB_Global || (!window.BDFDB_Global.loaded && !window.BDFDB_Global.started) ? class {
@@ -114,6 +112,7 @@ module.exports = (_ => {
 					],
 					after: [
 						"BlockedMessageGroup",
+						"ChannelMembersThread",
 						"ChannelPins",
 						"DirectMessage",
 						"PrivateChannel",
@@ -274,7 +273,7 @@ module.exports = (_ => {
 			processMessages (e) {
 				if (!this.settings.places.messages && !this.settings.places.spamMessages && !this.settings.places.ignoredMessages && !this.settings.places.repliesToBlocked) return;
 				if (BDFDB.ArrayUtils.is(e.instance.props.channelStream)) {
-					let oldStream = e.instance.props.channelStream.filter(n => !(this.settings.places.repliesToBlocked && n.content.messageReference && this.shouldHide((BDFDB.LibraryStores.MessageStore.getMessage(n.content.messageReference.channel_id, n.content.messageReference.message_id) || {author: {}}).author.id, n.type == "MESSAGE_GROUP_SPAMMER")));
+					let oldStream = e.instance.props.channelStream.filter(n => !(this.settings.places.repliesToBlocked && n.content.messageReference && this.shouldHide((BDFDB.LibraryStores.MessageStore.getMessage(n.content.messageReference.channel_id, n.content.messageReference.message_id) || {author: {}}).author.id, n.type == "MESSAGE_GROUP_SPAMMER")) && !(n.type == "MESSAGE_GROUP_BLOCKED" && n.content && n.content[0] && n.content[0].content && this.shouldHide(n.content[0].content.author.id)));
 					let newStream = [];
 					if (oldStream.length != e.instance.props.channelStream.length) {
 						for (let i in oldStream) {
@@ -299,7 +298,12 @@ module.exports = (_ => {
 					let messages = e.instance.props.messages;
 					e.instance.props.messages = new BDFDB.DiscordObjects.Messages(messages);
 					for (let key in messages) e.instance.props.messages[key] = messages[key];
-					e.instance.props.messages._array = [].concat(e.instance.props.messages._array.filter(n => !n.author || !this.shouldHide(n.author.id)));
+					e.instance.props.messages._array = [].concat(e.instance.props.messages._array.filter(n => !n.author || (!this.shouldHide(n.author.id) && !(this.settings.places.repliesToBlocked && n.messageReference && this.shouldHide((BDFDB.LibraryStores.MessageStore.getMessage(n.messageReference.channel_id, n.messageReference.message_id) || {author: {}}).author.id)))));
+					let previousAuthorid = null;
+					for (let i in e.instance.props.messages._array) {
+						if (previousAuthorid && previousAuthorid != e.instance.props.messages._array[i].author.id && e.instance.props.messages._array[i].type == 0) e.instance.props.messages._array[i].type = 19;
+						previousAuthorid = e.instance.props.messages._array[i].author.id;
+					}
 					if (e.instance.props.oldestUnreadMessageId && e.instance.props.messages._array.every(n => n.id != e.instance.props.oldestUnreadMessageId)) e.instance.props.oldestUnreadMessageId = null;
 				}
 			}
@@ -391,6 +395,41 @@ module.exports = (_ => {
 					let message = BDFDB.LibraryStores.MessageStore.getMessage(children[index].props.channel.id, children[index].props.channel.lastMessageId);
 					if (message && this.shouldHide(message.author.id)) children[index] = null;
 				}
+			}
+			
+			processChannelMembersThread (e) {
+				if (!this.settings.places.threads) return;
+				let child = BDFDB.ReactUtils.findChild(e.returnvalue, {props: ["children", "navigator"]});
+				if (!child) return;
+				let childrenRender = child.props.children.props.children;
+				child.props.children.props.children = BDFDB.TimeUtils.suppress((...args) => {
+					let children = childrenRender(...args);
+					let hiddenCounts = {};
+					let sectionTitles = {};
+					let renderRow = children.props.children.props.renderRow;
+					children.props.children.props.renderRow = BDFDB.TimeUtils.suppress((...args) => {
+						let row = renderRow(...args);
+						let hidden = this.shouldHide(row.props.userId);
+						if (hidden) {
+							if (!hiddenCounts[row.props.sectionId]) hiddenCounts[row.props.sectionId] = 1;
+							else hiddenCounts[row.props.sectionId] += 1;
+							if (sectionTitles[row.props.sectionId]) BDFDB.ReactUtils.forceUpdate(sectionTitles[row.props.sectionId]);
+						}
+						return hidden ? null : row;
+					}, "Error in renderRow of ChannelMembersThread!", this);
+					let renderSection = children.props.children.props.renderSection;
+					children.props.children.props.renderSection = BDFDB.TimeUtils.suppress((...args) => {
+						let section = renderSection(...args);
+						let count = section.props.count;
+						section.props.count = BDFDB.ReactUtils.createElement(class extends BdApi.React.Component {
+							render() {return count - (hiddenCounts[section.props.id] ? hiddenCounts[section.props.id] : 0);}
+						});
+						sectionTitles[section.props.id] = section.props.count;
+						return section;
+					}, "Error in renderSection of ChannelMembersThread!", this);
+
+					return children;
+				}, "Error in Children Render of ChannelMembersThread!", this);
 			}
 			
 			processChannelMembers (e) {

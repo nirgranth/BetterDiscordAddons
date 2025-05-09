@@ -2,7 +2,7 @@
  * @name ServerFolders
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 7.3.6
+ * @version 7.4.0
  * @description Changes Discord's Folders, Servers open in a new Container, also adds extra Features to more easily organize, customize and manage your Folders
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -121,27 +121,39 @@ module.exports = (_ => {
 											let folderIcons = _this.loadAllIcons();
 											folderIcon = folderIcons[data.iconID] ? (!folderIcons[data.iconID].customID ? _this.createBase64SVG(folderIcons[data.iconID].openicon, data.color1, data.color2) : folderIcons[data.iconID].openicon) : null;
 											folderIcon = folderIcon ? BDFDB.ReactUtils.createElement("div", {
-												className: BDFDB.disCN.guildfoldericonwrapper,
+												className: BDFDB.disCN.guildfolderbutton,
 												onClick: _ => BDFDB.LibraryModules.GuildUtils.toggleGuildFolderExpand(folder.folderId),
 												children: BDFDB.ReactUtils.createElement("div", {
-													className: BDFDB.disCN.guildfoldericonwrapperexpanded,
-													style: {background: `url(${folderIcon}) center/cover no-repeat`}
+													className: BDFDB.disCN.guildfolderbuttoncontent,
+													children: BDFDB.ReactUtils.createElement("div", {
+														className: BDFDB.disCN.guildfoldericonwrapper,
+														children: BDFDB.ReactUtils.createElement("div", {
+															className: BDFDB.disCN.guildfoldericon,
+															style: {background: `url(${folderIcon}) center/cover no-repeat`}
+														})
+													})
 												})
 											}) : BDFDB.ReactUtils.createElement("div", {
-												className: BDFDB.disCN.guildfoldericonwrapper,
+												className: BDFDB.disCN.guildfolderbutton,
 												onClick: _ => BDFDB.LibraryModules.GuildUtils.toggleGuildFolderExpand(folder.folderId),
 												children: BDFDB.ReactUtils.createElement("div", {
-													className: BDFDB.disCN.guildfoldericonwrapperexpanded,
-													children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-														name: BDFDB.LibraryComponents.SvgIcon.Names.FOLDER,
-														style: {color: BDFDB.ColorUtils.convert(folder.folderColor || BDFDB.DiscordConstants.Colors.BRAND, "RGB")}
+													className: BDFDB.disCN.guildfolderbuttoncontent,
+													children: BDFDB.ReactUtils.createElement("div", {
+														className: BDFDB.disCN.guildfoldericonwrapper,
+														children: BDFDB.ReactUtils.createElement("div", {
+															className: BDFDB.disCN.guildfoldericon,
+															children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
+																name: BDFDB.LibraryComponents.SvgIcon.Names.FOLDER,
+																style: {color: BDFDB.ColorUtils.convert(folder.folderColor || BDFDB.DiscordConstants.Colors.BRAND, "RGB")}
+															})
+														})
 													})
 												})
 											});
 										}
 										return BDFDB.ReactUtils.createElement("div", {
-											className: BDFDB.disCNS.stack + BDFDB.disCN.guildfolderwrapper,
-											style: {"--folder-color": folder.folderColor ? BDFDB.ColorUtils.convert(folder.folderColor, "RGB") : null},
+											className: BDFDB.disCNS.stack + BDFDB.disCNS.guildfolderwrapper + BDFDB.disCN.guildfolderisexpanded,
+											style: {"--custom-folder-color": folder.folderColor ? BDFDB.ColorUtils.convert(folder.folderColor, "RGB") : null},
 											children: [
 												_this.settings.general.addFolderBackground && BDFDB.ReactUtils.createElement("span", {
 													className: BDFDB.disCN.guildfolderexpandedbackground
@@ -477,8 +489,7 @@ module.exports = (_ => {
 						"TooltipContainer"
 					],
 					after: [
-						"FolderHeader",
-						"FolderItemWrapper",
+						"FolderIconWrapper",
 						"FolderSettingsModal",
 						"GuildItem",
 						"GuildsBar"
@@ -563,14 +574,14 @@ module.exports = (_ => {
 					${BDFDB.dotCNS.guilds + BDFDB.dotCN.guildfolder},
 					${BDFDB.dotCNS.guilds + BDFDB.dotCN.guildfolder}:hover {
 						background-color: var(--background-secondary);
-					}
-					${BDFDB.dotCNS._serverfoldersfoldercontent + BDFDB.dotCN.guildfolder} {
 						border-radius: 25%;
 					}
-					${BDFDB.dotCNS._serverfoldersfoldercontent + BDFDB.dotCN.guildfolder},
-					${BDFDB.dotCNS._serverfoldersfoldercontent + BDFDB.dotCN.guildfoldericonwrapper} {
+					${BDFDB.dotCNS._serverfoldersfoldercontent + BDFDB.dotCN.guildfolder} {
 						width: var(--guildbar-avatar-size, var(--guildbar-folder-size));
 						height: var(--guildbar-avatar-size, var(--guildbar-folder-size));
+					}
+					${BDFDB.dotCNS._serverfoldersfoldercontent + BDFDB.dotCN.guildfoldericonwrapper} {
+						padding: 0;
 					}
 					${BDFDB.dotCNS.guilds + BDFDB.dotCN.guildfoldericon} {
 						margin-bottom: 0 !important;
@@ -824,16 +835,7 @@ module.exports = (_ => {
 				folderStates[e.instance.props.folderNode.id] = state;
 			}
 			
-			processFolderItemWrapper (e) {
-				if (!e.instance.props.folderNode && e.returnvalue.props.style["--folder-color"]) return;
-				let folderColor = this.settings.general.addFolderBackground && BDFDB.LibraryStores.ExpandedGuildFolderStore.isFolderExpanded(e.instance.props.folderNode.id) && (BDFDB.ColorUtils.convert(e.instance.props.folderNode.color, "HEX") || BDFDB.ColorUtils.convert(BDFDB.DiscordConstants.Colors.BRAND, "RGB"));
-				if (folderColor) e.returnvalue = BDFDB.ReactUtils.createElement("div", {
-					style: {"--folder-color": folderColor},
-					children: e.returnvalue
-				});
-			}
-			
-			processFolderHeader (e) {
+			processFolderIconWrapper (e) {
 				if (!e.instance.props.folderNode) return;
 				let data = this.getFolderConfig(e.instance.props.folderNode.id);
 				
@@ -842,7 +844,7 @@ module.exports = (_ => {
 					if (parseInt(data.iconID) == -1 && (e.instance.props.expanded || data.useClosedIcon && !e.instance.props.expanded)) children[index] = BDFDB.ReactUtils.createElement("div", {
 						className: BDFDB.disCN.guildfoldericonwrapper,
 						children: BDFDB.ReactUtils.createElement("div", {
-							className: BDFDB.disCN.guildfoldericonwrapperexpanded,
+							className: BDFDB.disCN.guildfoldericon,
 							children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
 								name: BDFDB.LibraryComponents.SvgIcon.Names.FOLDER,
 								style: {color: BDFDB.ColorUtils.convert(data.color1 || BDFDB.DiscordConstants.Colors.BRAND, "RGB")}
@@ -856,7 +858,7 @@ module.exports = (_ => {
 							children[index] = BDFDB.ReactUtils.createElement("div", {
 								className: BDFDB.disCN.guildfoldericonwrapper,
 								children: BDFDB.ReactUtils.createElement("div", {
-									className: BDFDB.disCN.guildfoldericonwrapperexpanded,
+									className: BDFDB.disCN.guildfoldericon,
 									style: {background: `url(${icon}) center/cover no-repeat`}
 								})
 							});
@@ -865,9 +867,9 @@ module.exports = (_ => {
 					}
 					if (this.settings.general.showCountBadge) {
 						let mask = BDFDB.ReactUtils.findChild(e.returnvalue, {name: "BlobMask"});
-						if (mask) {
-							mask.props.upperLeftBadgeWidth = BDFDB.LibraryComponents.Badges.NumberBadge.prototype.getBadgeWidthForValue(e.instance.props.folderNode.children.length);
-							mask.props.upperLeftBadge = BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Badges.NumberBadge, {
+						if (mask && !mask.props.upperBadge) {
+							mask.props.upperBadgeWidth = BDFDB.LibraryComponents.Badges.NumberBadge.prototype.getBadgeWidthForValue(e.instance.props.folderNode.children.length);
+							mask.props.upperBadge = BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Badges.NumberBadge, {
 								count: e.instance.props.folderNode.children.length,
 								style: {backgroundColor: "var(--bdfdb-blurple)"}
 							});
@@ -967,14 +969,7 @@ module.exports = (_ => {
 									{value: this.labels.modal_tabheader3},
 									{value: this.labels.modal_tabheader4}
 								],
-								onItemSelect: (value, instance) => {
-									let tabsArray = BDFDB.ObjectUtils.toArray(tabs);
-									for (let ins of tabsArray) {
-										if (ins.props.tab == value) ins.props.open = true;
-										else delete ins.props.open;
-									}
-									BDFDB.ReactUtils.forceUpdate(tabsArray);
-								}
+								onItemSelect: value => {for (let key in tabs) tabs[key].setState({open: key == value});}
 							})
 						})
 					}));
