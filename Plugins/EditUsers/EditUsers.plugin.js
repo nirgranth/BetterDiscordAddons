@@ -2,7 +2,7 @@
  * @name EditUsers
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 5.0.3
+ * @version 5.0.5
  * @description Allows you to locally edit Users
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -588,7 +588,7 @@ module.exports = (_ => {
 			}
 			
 			processUserHeaderAvatar (e) {
-				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || e.instance.props.profileType == BDFDB.DiscordConstants.ProfileTypes.PANEL && !this.settings.places.userPanel || e.instance.props.profileType == BDFDB.DiscordConstants.ProfileTypes.BITE_SIZE && !this.settings.places.userPopout || e.instance.props.profileType == BDFDB.DiscordConstants.ProfileTypes.FULL_SIZE && !this.settings.places.userProfile) return;
+				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && !this.settings.places.userPanel || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.POPOUT && !this.settings.places.userPopout || (e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) && !this.settings.places.userProfile) return;
 				let data = changedUsers[e.instance.props.user.id];
 				e.instance.props.user = this.getUserData(e.instance.props.user.id, true, true);
 				if (e.instance.props.displayProfile) {
@@ -602,7 +602,8 @@ module.exports = (_ => {
 			}
 			
 			processUserHeaderUsername (e) {
-				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && !this.settings.places.userPanel || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.POPOUT && !this.settings.places.userPopout || (e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) && !this.settings.places.userProfile) return;
+				let themeType = BDFDB.ObjectUtils.get(e.instance, "props.tags.props.themeType");
+				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || themeType == BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && !this.settings.places.userPanel || themeType == BDFDB.DiscordConstants.ProfileTypes.POPOUT && !this.settings.places.userPopout || (themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL || themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) && !this.settings.places.userProfile) return;
 				let data = changedUsers[e.instance.props.user.id];
 				if (!e.returnvalue) {
 					let nickname = this.getUserNick(e.instance.props.user.id, e.instance.props.nickname || e.instance.props.user.globalName);
@@ -1053,7 +1054,22 @@ module.exports = (_ => {
 				if (!e.instance.props.user) return;
 				let channelId = BDFDB.LibraryStores.SelectedChannelStore.getChannelId();
 				if (!this.settings.places.memberList || !this.shouldChangeInChat(channelId)) return;
-				this.changeUserColor(e.returnvalue.props.children[0], e.instance.props.user.id, {e: e, guildId: e.instance.props.guildId});
+				let data = changedUsers[e.instance.props.user.id] || {};
+				if (data.color1) {
+					let className = e.returnvalue.props.children[0].props.className;
+					e.returnvalue.props.children[0] = BDFDB.ReactUtils.createElement("span", {
+						className: BDFDB.disCNS.membername + BDFDB.disCN.membernameuser,
+						children: e.returnvalue.props.children[0].props.name
+					});
+					this.changeUserColor(e.returnvalue.props.children[0], e.instance.props.user.id, {e: e, guildId: e.instance.props.guildId});
+					e.returnvalue.props.children[0] = BDFDB.ReactUtils.createElement("span", {
+						className: BDFDB.DOMUtils.formatClassName(className, BDFDB.disCN.membernameouter),
+						children: BDFDB.ReactUtils.createElement("span", {
+							className: BDFDB.disCN.membernamecontainer,
+							children: e.returnvalue.props.children[0]
+						})
+					});
+				}
 				this.injectBadge(e.returnvalue.props.children, e.instance.props.user.id, e.instance.props.guildId, 2, {
 					tagClass: BDFDB.disCN.bottagmember
 				});

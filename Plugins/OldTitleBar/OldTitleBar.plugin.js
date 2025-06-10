@@ -2,7 +2,7 @@
  * @name OldTitleBar
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.8.5
+ * @version 1.8.7
  * @description Allows you to switch to Discord's old Titlebar
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -75,9 +75,33 @@ module.exports = (_ => {
 			}
 			render() {
 				let children = [];
-				if (this.props.addFirstDivider) children.push(BDFDB.ReactUtils.createElement("div", {className: BDFDB.disCN.channelheaderdivider}));
+				if (_this.settings.general.minimizeButton) children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
+					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
+					onClick: _ => BDFDB.LibraryModules.WindowUtils.minimize(),
+					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
+						className: BDFDB.disCN.channelheadericon,
+						iconSVG: `<svg width="24" height="24"><path fill="currentColor" d="M 3.0000229,18.453 V 21 H 21.000023 v -2.547 z"/></svg>`
+					})
+				}));
+				if (_this.settings.general.maximizeButton) children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
+					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
+					onClick: _ => _this.maximize(),
+					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
+						className: BDFDB.disCN.channelheadericon,
+						iconSVG: _this.isMaximized() ? `<svg width="24" height="24"><path fill="currentColor" d="M 6.1764705,3 V 5.3968291 H 18.60317 c 0,0 -0.01092,12.5543579 0,12.4267009 H 21 V 3 Z M 3,6.1764705 V 21 H 17.82353 V 6.1764705 Z m 2.3968291,2.396829 H 15.4267 V 18.60317 H 5.3968291 Z"/></svg>` : `<svg width="24" height="24"><path fill="currentColor" d="m 3.0000225,3.0000002 c 0,0 0,18.0327688 0,17.9999548 H 20.999977 V 3.0000002 Z M 5.5466471,5.5466248 H 18.453353 V 18.453331 H 5.5466471 Z"/></svg>`
+					})
+				}));
+				if (_this.settings.general.closeButton) children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
+					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
+					onClick: _ => BDFDB.LibraryModules.WindowUtils.close(),
+					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
+						className: BDFDB.disCN.channelheadericon,
+						iconSVG: `<svg width="24" height="24"><path fill="currentColor" d="M 19.2,3 12,10.2 4.8,3 3,4.8 10.2,12 3,19.2 4.8,21 12,13.8 19.2,21 21,19.2 13.8,12 21,4.8 Z"/></svg>`
+					})
+				}));
 				if (_this.settings.general.reloadButton) {
-					children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
+					if (children.length) children.unshift(BDFDB.ReactUtils.createElement("div", {className: BDFDB.disCN.channelheaderdivider}));
+					children.unshift(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
 						text: BDFDB.LanguageUtils.LanguageStrings.ERRORS_RELOAD,
 						tooltipConfig: {type: "bottom"},
 						children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
@@ -89,35 +113,13 @@ module.exports = (_ => {
 							})
 						})
 					}));
-					children.push(BDFDB.ReactUtils.createElement("div", {className: BDFDB.disCN.channelheaderdivider}));
 				};
-				children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
-					onClick: _ => BDFDB.LibraryModules.WindowUtils.minimize(),
-					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-						className: BDFDB.disCN.channelheadericon,
-						iconSVG: `<svg width="24" height="24"><path fill="currentColor" d="M 3.0000229,18.453 V 21 H 21.000023 v -2.547 z"/></svg>`
-					})
-				}));
-				children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
-					onClick: _ => _this.maximize(),
-					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-						className: BDFDB.disCN.channelheadericon,
-						iconSVG: _this.isMaximized() ? `<svg width="24" height="24"><path fill="currentColor" d="M 6.1764705,3 V 5.3968291 H 18.60317 c 0,0 -0.01092,12.5543579 0,12.4267009 H 21 V 3 Z M 3,6.1764705 V 21 H 17.82353 V 6.1764705 Z m 2.3968291,2.396829 H 15.4267 V 18.60317 H 5.3968291 Z"/></svg>` : `<svg width="24" height="24"><path fill="currentColor" d="m 3.0000225,3.0000002 c 0,0 0,18.0327688 0,17.9999548 H 20.999977 V 3.0000002 Z M 5.5466471,5.5466248 H 18.453353 V 18.453331 H 5.5466471 Z"/></svg>`
-					})
-				}));
-				children.push(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-					className: BDFDB.disCNS.channelheadericonwrapper + BDFDB.disCN.channelheadericonclickable,
-					onClick: _ => BDFDB.LibraryModules.WindowUtils.close(),
-					children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-						className: BDFDB.disCN.channelheadericon,
-						iconSVG: `<svg width="24" height="24"><path fill="currentColor" d="M 19.2,3 12,10.2 4.8,3 3,4.8 10.2,12 3,19.2 4.8,21 12,13.8 19.2,21 21,19.2 13.8,12 21,4.8 Z"/></svg>`
-					})
-				}));
-				return BDFDB.ReactUtils.createElement("div", {
+				return !children.length ? null : BDFDB.ReactUtils.createElement("div", {
 					className: BDFDB.disCN._oldtitlebartoolbar,
-					children: children
+					children: [
+						this.props.addFirstDivider && BDFDB.ReactUtils.createElement("div", {className: BDFDB.disCN.channelheaderdivider}),
+						children
+					].flat(10)
 				});
 			}
 		};
@@ -129,13 +131,17 @@ module.exports = (_ => {
 				this.defaults = {
 					general: {
 						addToSettings:		{value: true, 				description: "Adds a Titlebar to Settings Windows"},
-						reloadButton:		{value: true, 				description: "Adds a Reload Button to the Titlebar"}
+						reloadButton:		{value: true, 				description: "Adds a Reload Button to the Titlebar"},
+						minimizeButton:		{value: true, 				description: "Adds a Minimize Button to the Titlebar"},
+						maximizeButton:		{value: true, 				description: "Adds a Resize/Maximize Button to the Titlebar"},
+						closeButton:		{value: true, 				description: "Adds a Close Button to the Titlebar"}
 					}
 				};
 			
 				this.modulePatches = {
 					before: [
 						"HeaderBar",
+						"HeaderBarDiscovery",
 						"TitleBar"
 					],
 					after: [
@@ -162,6 +168,15 @@ module.exports = (_ => {
 
 					${BDFDB.dotCNS._oldtitlebarenabled + BDFDB.dotCN.guildsscroller} {
 						padding-top: 4px;
+					}
+					
+					${BDFDB.dotCNS._oldtitlebarenabled + BDFDB.dotCN.channelheaderheaderbar},
+					${BDFDB.dotCNS._oldtitlebarenabled + BDFDB.dotCN.channelheaderdiscovery} {
+						padding-right: 8px;
+					}
+					
+					${BDFDB.dotCNS._oldtitlebarenabled + BDFDB.dotCN.channelheaderdiscoverysearchfloating} {
+						position: static;
 					}
 					
 					${BDFDB.dotCNS._oldtitlebarenabled + BDFDB.dotCN.settingswindowstandardsidebarview}:before {
@@ -265,7 +280,12 @@ module.exports = (_ => {
 				titleBarButton = e.instance.props.trailing;
 			}
 			
+			processHeaderBarDiscovery (e) {
+				this.injectButtons(e.instance.props.children);
+			}
+			
 			processHeaderBar (e) {
+				if (e.instance.props.className && e.instance.props.className.indexOf("fullscreen") > -1) return;
 				let wrapper = BDFDB.ReactUtils.findChild(e.instance, {props: ["toolbar", "children"]});
 				if (!wrapper) return;
 				let children = BDFDB.ArrayUtils.is(wrapper.props.toolbar) ? wrapper.props.toolbar : BDFDB.ObjectUtils.get(wrapper, "props.toolbar.props.children");
@@ -276,7 +296,7 @@ module.exports = (_ => {
 						BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Flex, {children})
 					];
 				}
-				if (document.querySelector(BDFDB.dotCN.titlebarthick)) children.push(titleBarButton);
+				children.push(titleBarButton);
 				this.injectButtons(children, true);
 			}
 

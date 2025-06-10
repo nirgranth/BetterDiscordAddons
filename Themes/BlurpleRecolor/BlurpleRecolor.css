@@ -54,6 +54,8 @@
 	--mention-background: rgba(var(--accentcolor_v),.3) !important;
 	--mention-foreground: var(--brand-experiment-200) !important;
 	
+	--background-message-highlight: rgba(var(--accentcolor_v),.2) !important;
+	
 	--brand-experiment-100: #fdfdfd !important;
 	--brand-experiment-130: #f2f2f2 !important;
 	--brand-experiment-160: #ebebeb !important;
@@ -193,6 +195,8 @@
 	
 	--premium-perk-blue: rgb(var(--accentcolor_v)) !important;
 	--premium-perk-pink: rgb(var(--accentcolor2_v)) !important;
+	--premium-tier-0-blue: rgb(var(--accentcolor_v)) !important;
+	--premium-tier-0-blue-for-gradients: rgb(var(--accentcolor_v)) !important;
 	--premium-tier-0-purple: rgb(var(--accentcolor2_v)) !important;
 	--premium-tier-0-purple-for-gradients: rgb(var(--accentcolor2_v)) !important;
 	--premium-tier-1-blue: rgb(var(--accentcolor_v)) !important;
@@ -207,8 +211,8 @@
 	--premium-tier-2-purple: rgb(var(--accentcolor2_v)) !important;
 	--premium-tier-2-purple-for-gradients: rgb(var(--accentcolor2_v)) !important;
 	--premium-tier-2-purple-for-gradients-2: rgb(var(--accentcolor2_v)) !important;
-	--guild-boosting-pink: rgb(var(--accentcolor2_v)) !important;
-	--guild-boosting-pink-rgb: var(--accentcolor2_v) !important;
+	--guild-boosting-pink: rgb(var(--accentcolor_v)) !important;
+	--guild-boosting-pink-rgb: var(--accentcolor_v) !important;
 	--guild-boosting-purple: rgb(var(--accentcolor2_v)) !important;
 	--guild-boosting-purple-rgb: var(--accentcolor2_v) !important;
 	--guild-boosting-blue: rgb(var(--accentcolor2_v)) !important;
@@ -510,47 +514,6 @@
 	color: rgb(var(--accentcolor_v));
 }
 
-.backgroundFlash__5126c[style*="(148, 156, 247"] {
-	background-color: var(--message-background-flash) !important;
-}
-.backgroundFlash__5126c[style*="background-color: rgb(148, 156, 247)"],
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 1"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 1);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.9"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.9);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.8"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.8);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.7"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.7);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.6"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.6);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.5"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.5);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.4"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.4);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.3"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.3);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.2"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.2);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.1"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.1);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0.0"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0.05);
-}
-.backgroundFlash__5126c[style*="background-color: rgba(148, 156, 247, 0)"] {
-	--message-background-flash: rgba(var(--accentcolor_v), 0);
-}
-
 .embedFull__623de[style*="border-color: hsl(216, "],
 .embedFull__623de[style*="border-color: hsl(227, "],
 .embedFull__623de[style*="border-color: hsl(235, "],
@@ -609,14 +572,21 @@
 	color: #fff;
 }
 
+#app-mount .pill_a2c9e8.selected_a2c9e8,
 #app-mount .reaction__23977.reactionMe__23977 {						/* reaction				wrapper me							*/
 	background-color: rgba(var(--accentcolor_v), .3);
 	border-color: rgb(var(--accentcolor_v));
 }
+#app-mount .pill_a2c9e8:hover,
 #app-mount .reaction__23977:hover,							/* reaction				add react							*/
 .addReactButton__34c2c:hover,								/* reaction				add new react							*/
 .buttonInner__34c2c:hover {
 	border-color: rgba(var(--accentcolor_v), .5);
+}
+#app-mount .pill_a2c9e8.selected_a2c9e8 > div,
+#app-mount .reaction__23977.reactionMe__23977 .reactionCount__23977 {
+	color: #fff !important;
+	opacity: .6;
 }
 .progressBar__89dcd[style*="background-color: hsl(227, "],				/* attachment				upload bar							*/
 .progressBar__89dcd[style*="background-color: hsl(235, "] {

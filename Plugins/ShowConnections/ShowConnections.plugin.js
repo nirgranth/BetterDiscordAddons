@@ -2,7 +2,7 @@
  * @name ShowConnections
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.2.7
+ * @version 1.2.9
  * @description Shows the connected Accounts of a User in the UserPopout
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -14,7 +14,9 @@
 
 module.exports = (_ => {
 	const changeLog = {
-		
+		"improved": {
+			"Themed Popups": "Icons now adapt to the Color of Custom User Popups. Meaning bright Colors -> dark Icons and dark Colors -> bright Icons"
+		}
 	};
 
 	return !window.BDFDB_Global || (!window.BDFDB_Global.loaded && !window.BDFDB_Global.started) ? class {
@@ -120,7 +122,7 @@ module.exports = (_ => {
 										BDFDB.ReactUtils.createElement("img", {
 											className: BDFDB.disCN._showconnectionsicon,
 											alt: BDFDB.LanguageUtils.LanguageStringsFormat("IMG_ALT_LOGO", provider.name),
-											src: provider.icon[_this.settings.general.useColoredIcons ? (isLightTheme ? "lightSVG" : "darkSVG" ) : "whiteSVG"]
+											src: provider.icon[this.props.popoutColor ? (BDFDB.ColorUtils.isBright(this.props.popoutColor) ? "lightSVG" : "darkSVG") : (_this.settings.general.useColoredIcons ? (isLightTheme ? "lightSVG" : "darkSVG") : "whiteSVG")]
 										}),
 										_this.settings.general.showVerifiedBadge && c.verified && BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
 											text: BDFDB.LanguageUtils.LanguageStrings.CONNECTION_VERIFIED,
@@ -253,13 +255,14 @@ module.exports = (_ => {
 			}
 
 			processUserHeaderUsername (e) {
-				if (e.instance.props.profileType != "BITE_SIZE" || e.instance.props.className) return;
+				let themeType = BDFDB.ObjectUtils.get(e.instance, "props.tags.props.themeType");
+				if (themeType != BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && themeType != BDFDB.DiscordConstants.ProfileTypes.POPOUT || e.instance.props.className) return;
 				let user = e.instance.props.user || BDFDB.LibraryStores.UserStore.getUser(e.instance.props.userId);
 				if (!user || user.isNonUserBot()) return;
 				e.returnvalue = [e.returnvalue].flat(10);
 				e.returnvalue.push(BDFDB.ReactUtils.createElement(UserConnectionsComponents, {
 					user: user,
-					isSimplified: true,
+					popoutColor: BDFDB.ObjectUtils.get(e.instance, "props.tags.props.displayProfile.themeColors.1"),
 					theme: e.instance.props.theme
 				}, true));
 			}

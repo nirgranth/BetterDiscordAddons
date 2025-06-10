@@ -278,6 +278,7 @@ html {
 		7.	CHAT SIDEBAR
 		8.	CALL
 		9.	UNAVAILABLESCREEN
+		10.	BOOSTSPAGE
 	7.	PEOPLES
 	8.	STORE/NITRO
 	9.	LIBRARY
@@ -370,6 +371,7 @@ body,											/* body													*/
 #app-mount .wrapper__61a6b,								/* app					errorscreen							*/
 #app-mount .bg__960e4,									/* app					background							*/
 #app-mount .layer__960e4,								/* layer				container							*/
+#app-mount .itemsContainer_ef3116,							/* guilds				inner (custom theme)						*/
 #app-mount .container_f37cb1,								/* channels				header								*/
 #app-mount .header_f37cb1,								/* channels				header inner							*/
 #app-mount .container__2637a,								/* channels				inner								*/
@@ -379,6 +381,8 @@ body,											/* body													*/
 #app-mount .chat_f75fb0,								/* chat					container							*/
 #app-mount .chatContent_f75fb0,								/* chat					channel								*/
 #app-mount .container_f369db,								/* chat					forums								*/
+#app-mount .container__89463,								/* chat					boosts								*/
+#app-mount .contentContainer__89463,							/* chat					boosts inner							*/
 #app-mount .container__0b563,								/* chat					search								*/
 #app-mount .container_c2efea,								/* chat					search inner							*/
 #app-mount .container__01ae2,								/* chat					thread sidebar							*/
@@ -392,6 +396,8 @@ body,											/* body													*/
 #app-mount .container__133bf,								/* peoples												*/
 #app-mount .tabBody__133bf,								/* peoples				tab body							*/
 #app-mount .container__7d20c,								/* peoples				activity list							*/
+#app-mount .mainPageScroller_ca1a02,							/* nitro												*/
+#app-mount .allPerksScroller_ca1a02,							/* nitro												*/
 #app-mount .applicationStore_f07d62,							/* nitro												*/
 #app-mount .homeWrapper__0920e,								/* nitro												*/
 #app-mount .scroller_c880e8,								/* nitro				scroller							*/
@@ -413,7 +419,11 @@ body,											/* body													*/
 #app-mount .app_a3002d {
 	color: transparent;
 }
+#app-mount .chat_f75fb0.threadSidebarOpen_f75fb0,					/* chat					sidebar open							*/
+#app-mount .sidebarContainer__89463,							/* chat					boosts sidebar							*/
+#app-mount .container__01ae2,								/* chat					forum sidepanel							*/
 #app-mount .container_c8ffbb,								/* members				container							*/
+#app-mount .container__7641b,								/* members				threads								*/
 #app-mount .scroller__7d20c {								/* peoples				activity scroller						*/
 	border: none;
 }
@@ -437,6 +447,7 @@ body,											/* body													*/
 	padding-top: 4px;
 }
 #app-mount .sidebar_c48ade:after {
+	display: block !important;
 	background-color: rgba(var(--transparencycolor_v), calc(var(--guildchanneltransparency_v) * 2));
 	width: var(--custom-guild-list-width);
 	height: calc(var(--custom-app-panels-height, 0) + var(--space-xs));
@@ -451,6 +462,9 @@ body,											/* body													*/
 	background-color: rgba(var(--transparencycolor_v), var(--memberlisttransparency_v));
 }
 #app-mount .nowPlayingColumn__133bf {							/* peoples				now playing							*/
+	background-color: rgba(var(--transparencycolor_v), var(--memberlisttransparency_v));
+}
+#app-mount .sidebarContainer__89463 {							/* chat					boosts sidepanel						*/
 	background-color: rgba(var(--transparencycolor_v), var(--memberlisttransparency_v));
 }
 
@@ -775,7 +789,7 @@ body:has(#app-mount)::after {
 	color: var(--channels-default);
 }
 
-.wrapper__260e1 {									/* voicechat				limit								*/
+#app-mount .wrapper__260e1 {								/* voicechat				limit								*/
 	background-color: rgba(var(--transparencycolor_v), .15);
 	display: flex !important;
 	align-items: center !important;
@@ -800,7 +814,11 @@ body:has(#app-mount)::after {
 }
 
 .listDefault__07f91 .clickable__07f91:hover .content__07f91 {
-	background-color: rgba(var(--transparencycolor_v), .2);
+	background: rgba(var(--transparencycolor_v), .2);
+}
+.optionsActive__07f91,
+.optionsButton__07f91:hover {
+	background: rgb(var(--accentcolor_v));
 }
 
 #app-mount .streamPreview__6da2d {
@@ -895,18 +913,18 @@ body:has(#app-mount)::after {
 /* ----		5.4.		ACCOUNT/VOICE/GOLIVE				---- */
 
 #app-mount .panels_c48ade {								/* account/voice			container							*/
-	background-color: transparent;
+	background: transparent;
 	border: unset;
 	border-radius: unset;
-	overflow: hidden;
 }
-.panels_c48ade > * {
-	position: relative !important;
+#app-mount .panels_c48ade > *:not(:empty) ~ *:not(:empty) {
+	border-top: 1px solid var(--border-subtle);
 }
-.panels_c48ade > *::before,
-.panels_c48ade > *::after {
+.panels_c48ade::before,
+.panels_c48ade::after {
 	content: "";
 	position: absolute;
+	border-radius: var(--radius-sm);
 	top: 0;
 	bottom: 0;
 	right: 0;
@@ -917,39 +935,27 @@ body:has(#app-mount)::after {
 	pointer-events: none;
 	z-index: -2;
 }
-.panels_c48ade > *::before {
+.panels_c48ade::before {
 	background: var(--background_v) var(--backgroundposition_v)/var(--backgroundsize_v);
 	background-attachment: fixed;
 }
-.panels_c48ade > *::after {
+.panels_c48ade::after {
 	background-color: rgba(var(--transparencycolor_v), calc(var(--guildchanneltransparency_v) * 2.5 + var(--transparencyalpha_v) * 0.7));
 	backdrop-filter: blur(var(--backgroundblur_v));
-}
-.panels_c48ade::before,
-.panels_c48ade::after {
-	display: none;
-}
-.panels_c48ade > *:first-child::before,
-.panels_c48ade > *:first-child::after,
-.panels_c48ade > *:first-child:empty + *::before,
-.panels_c48ade > *:first-child:empty + *::after {
-	border-top-left-radius: var(--radius-sm);
-	border-top-right-radius: var(--radius-sm);
-}
-.panels_c48ade > *:last-child::before,
-.panels_c48ade > *:last-child::after {
-	border-bottom-left-radius: var(--radius-sm);
-	border-bottom-right-radius: var(--radius-sm);
 }
 
 #app-mount .panels_c48ade > *,								/* account/voice			inner								*/
 #app-mount .panels_c48ade .wrapper_e131a9 > * {						/* account/voice			inner								*/
 	background: none;
 	border: none;
-	margin: 0;
 }
-.panels_c48ade > *:not(:empty) ~ *:not(:empty):after {
-	border-top: 1px solid var(--border-subtle);
+#app-mount .container__37e49 {								/* account/voice			inner								*/
+	border-bottom-right-radius: var(--radius-sm);
+	border-bottom-left-radius: var(--radius-sm);
+}
+#app-mount .wrapper_e131a9:first-child:empty + .container__37e49 {
+	border-top-right-radius: var(--radius-sm);
+	border-top-left-radius: var(--radius-sm);
 }
 
 #app-mount button.button__67645.enabled__67645 {					/* account/voice			panel button							*/
@@ -1012,6 +1018,10 @@ body:has(#app-mount)::after {
 .chat_f75fb0.threadSidebarOpen_f75fb0 {							/* chat					threadsidebar open						*/
 	border-radius: 0;
 }
+#app-mount .content_f75fb0,
+#app-mount .subtitleContainer_f75fb0 {
+	border-left: 0 !important;
+}
 .editor__2a891 {									/* chat					editor								*/
 	border: none;
 }
@@ -1038,8 +1048,8 @@ body:has(#app-mount)::after {
 #app-mount .background_c54132 .containerCard__95c7a {
 	border-color: var(--background-secondary);
 }
+#app-mount .pill_a2c9e8,
 #app-mount .background_c54132 .container__55cc1:hover,
-#app-mount .container_f369db .pill_a2c9e8,
 #app-mount .container__0b563 .channelRow_e4503a:hover {
 	background: var(--background-tertiary);
 }
@@ -1049,6 +1059,14 @@ body:has(#app-mount)::after {
 }
 #app-mount .scrollerContainer_c6b11b .prompt__5d7c9 {
 	background: var(--background-secondary);
+}
+#app-mount .sortDropdown_f369db,
+#app-mount .tagsButton_f369db {
+	background-color: var(--background-secondary);
+}
+#app-mount .sortDropdown_f369db:hover,
+#app-mount .tagsButton_f369db:hover {
+	background-color: var(--background-tertiary);
 }
 
 .contentPreview__9a337 {								/* forum list				item								*/
@@ -1080,7 +1098,7 @@ body:has(#app-mount)::after {
 
 #app-mount .container__9293f.themed__9293f,						/* channelheader			channels							*/
 #app-mount .headerBar__8a7fc {								/* channelheader			discovery							*/
-	background-color: rgba(var(--transparencycolor_v), var(--guildchanneltransparency_v)) !important;
+	background: rgba(var(--transparencycolor_v), var(--guildchanneltransparency_v)) !important;
 	border-bottom: 1px solid rgba(var(--transparencycolor_v), .2) !important;
 	position: static !important;
 }
@@ -1097,6 +1115,7 @@ body:has(#app-mount)::after {
 	bottom: 0;
 	right: 0;
 	left: 0;
+	height: inherit;
 	pointer-events: none;
 	border-bottom-right-radius: inherit;
 	z-index: -1;
@@ -1143,8 +1162,9 @@ body:has(#app-mount)::after {
 	background-color: rgba(var(--transparencycolor_v), .3);
 }
 
-.searchBar__97492 {									/* header				searchbar							*/
-	background-color: rgba(var(--transparencycolor_v), .3);
+#app-mount .searchBar__97492,								/* header				searchbar							*/
+#app-mount .searchBar__1ac1c {								/* header				searchbar							*/
+	background: rgba(var(--transparencycolor_v), .3);
 }
 #app-mount .public-DraftEditorPlaceholder-root {
 	color: var(--text-muted);
@@ -1234,7 +1254,7 @@ body:has(#app-mount)::after {
 }
 #app-mount .content__908e2 {								/* divider				content								*/
 	position: absolute;
-	background-color: transparent;
+	background: transparent;
 	color: var(--header-secondary);
 	padding: 2px 8px;
 	width: unset;
@@ -1308,7 +1328,7 @@ body:has(#app-mount)::after {
 /* ====		6.2.1.		MESSAGE						==== */
 
 #app-mount .message__89466 {								/* message				confirm modal							*/
-	background-color: rgba(var(--transparencycolor_v), .2);
+	background: rgba(var(--transparencycolor_v), .2);
 	box-shadow: none;
 }
 .message__5126c,									/* message				container							*/
@@ -1320,11 +1340,11 @@ body:has(#app-mount)::after {
 .message__89466 .wrapper_c19a55,							/* message				settings preview						*/
 .messageGroupCozy__45690,								/* message				pin popout							*/
 .message__02a39 .wrapper_c19a55 {							/* message				searchpage							*/
-	background-color: rgba(var(--transparencycolor_v), var(--messagetransparency_v)) !important;
+	background: rgba(var(--transparencycolor_v), var(--messagetransparency_v)) !important;
 	contain: unset;
 }
 .message__02a39 .wrapper_c19a55 {							/* message				searchpage							*/
-	background-color: rgba(var(--transparencycolor_v), calc(var(--messagetransparency_v) * 0.8)) !important;
+	background: rgba(var(--transparencycolor_v), calc(var(--messagetransparency_v) * 0.8)) !important;
 }
 #app-mount .message__5126c {
 	border-radius: 0;
@@ -1360,7 +1380,7 @@ body:has(#app-mount)::after {
 .backgroundFlash__5126c .message__5126c::before {
 	content: "";
 	position: absolute;
-	background: var(--message-background-flash, transparent);
+	background: var(--background-message-highlight, transparent);
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -1957,7 +1977,7 @@ body:has(#app-mount)::after {
 }
 
 #app-mount .channelTextArea_f75fb0 {							/* textarea				channeltextarea							*/
-	background-color: transparent;
+	background: transparent;
 	border: none;
 }
 
@@ -1979,15 +1999,16 @@ body:has(#app-mount)::after {
 	border-top-right-radius: 0;
 }
 #app-mount .replyBar__841c8,
+#app-mount .scheduledMessageBar_ba21b4,
 #app-mount .threadSuggestionBar__841c8 {
 	background: transparent;
 }
 
 #app-mount .themedBackground__74017 {							/* textarea				container							*/
-	background-color: rgba(var(--transparencycolor_v), .3);
+	background: rgba(var(--transparencycolor_v), .3);
 }
 #app-mount .inlineContainer__74017 .themedBackground__74017 {				/* textarea				container popout						*/
-	background-color: transparent;
+	background: transparent;
 }
 
 .sprite__04eed {									/* textarea				emojibutton							*/
@@ -2203,7 +2224,7 @@ body:has(#app-mount)::after {
 	display: block;
 	top: 10px;
 	bottom: 10px;
-	left: -3.5px;
+	left: -4.3px;
 	width: 1px;
 	background: var(--background-modifier-accent);
 	pointer-events: none;
@@ -2243,11 +2264,12 @@ body:has(#app-mount)::after {
 #app-mount .root_bfe55a,								/* call					root								*/
 #app-mount .callContainer_cb9592,							/* call					root								*/
 #app-mount .wrapper_cb9592 {								/* call					root								*/
-	background: rgba(var(--transparencycolor_v), 0);
+	background: transparent;
 	color: var(--header-primary);
+	border-left: 0 !important;
 }
 #app-mount .buttonSection__1405b {
-	background: rgba(var(--transparencycolor_v), 0.3);
+	background: rgba(var(--transparencycolor_v), .3);
 }
 
 :not(:root):fullscreen::backdrop {
@@ -2333,14 +2355,60 @@ body:has(#app-mount)::after {
 	opacity: 0.7;
 }
 
+/* ----		6.10.		BOOSTSPAGE					---- */
+
+.parentContainer__98cbd .container__98cbd {
+	transform: unset !important;
+	top: 0;
+	transition: border-width .2s ease,border-color .2s ease,box-shadow .2s ease,top .2s ease-in-out;
+}
+.parentContainer__98cbd:hover .container__98cbd {
+	top: -4px;
+}
+.boostContainer__823e1 {
+	background: transparent;
+	border-color: rgba(var(--transparencycolor_v), .2);
+	z-index: 2;
+}
+.boostContainer__823e1::before,
+.boostContainer__823e1::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: -1;
+}
+.boostContainer__823e1::before {
+	background: var(--background_v) var(--backgroundposition_v)/var(--backgroundsize_v);
+	background-attachment: fixed;
+}
+.boostContainer__823e1::after {
+	background-color: rgba(var(--transparencycolor_v), .5);
+	backdrop-filter: blur(var(--backgroundblur_v));
+}
+.boostContainer__823e1.boostContainerActive__823e1::before,
+.boostContainer__823e1.boostContainerActive__823e1::after {
+	display: none;
+}
+
 
 /* ~~~~		7.		PEOPLES						~~~~ */
 
 .container__133bf {									/* peoples												*/
 	border-top: 0 !important;
 }
+.tabBody__133bf {									/* peoples												*/
+	border-left: 0 !important;
+}
 #app-mount .dot__9293f {
 	color: inherit;
+}
+#app-mount .searchBar__5ec2f {								/* peoples				search							*/
+	background: rgba(var(--transparencycolor_v), .1);
 }
 .addFriendInputWrapper__72ba7 {								/* peoples				add friend							*/
 	background-color: rgba(var(--transparencycolor_v), .1);
@@ -2463,6 +2531,26 @@ body:has(#app-mount)::after {
 	position: static !important;
 	margin-top: unset !important;
 }
+
+.mainPageScroller_ca1a02 {
+	opacity: 1;
+	transition: opacity .75s ease-in-out;
+}
+.homeWrapper__0920e:has(.allPerksScroller_ca1a02.open_ca1a02) .mainPageScroller_ca1a02 {
+	opacity: 0;
+}
+#app-mount .inactiveArrow__3cf14 {
+	background: rgba(var(--transparencycolor_v), .2);
+}
+#app-mount .leftArrow__3cf14,
+#app-mount .rightArrow__3cf14 {
+	background: rgba(var(--transparencycolor_v), .4);
+}
+#app-mount .leftArrow__3cf14:hover,
+#app-mount .rightArrow__3cf14:hover {
+	background: rgb(var(--accentcolor_v));
+}
+
 #app-mount .shopCard_c3d04b {								/* store				card								*/
 	background-color: var(--background-secondary) !important;
 }
@@ -3225,7 +3313,7 @@ body:has(#app-mount)::after {
 	color: var(--header-primary);
 }
 
-.preview__3e443 {									/* appearance				preview								*/
+#app-mount .preview__3e443 {							/* appearance				preview								*/
 	background-color: rgba(var(--transparencycolor_v), .2);
 	border-color: rgba(var(--transparencycolor_v), .2);
 }
@@ -6164,14 +6252,14 @@ body:has(#app-mount)::after {
 
 .clickable__91a9d .childContainer__91a9d .layout__91a9d,
 .selected__91a9d .childContainer__91a9d .layout__91a9d {
-	background-color: transparent !important;
+	background: transparent !important;
 }
 .clickable__91a9d:hover .childContainer__91a9d,
 .clickable__91a9d:hover .layout__91a9d {
-	background-color: rgba(var(--transparencycolor_v), .2);
+	background: rgba(var(--transparencycolor_v), .2);
 }
 #app-mount .container__0f2e8 {
-	background-color: rgba(var(--transparencycolor_v), .2);
+	background: rgba(var(--transparencycolor_v), .2);
 }
 .selected__0f2e8,
 .selected__0f2e8:hover,
@@ -6187,7 +6275,7 @@ body:has(#app-mount)::after {
 .selected__91a9d .layout__91a9d,
 .selected__91a9d:hover .layout__91a9d,
 .selected__91a9d:active .layout__91a9d {
-	background-color: rgb(var(--accentcolor_v));
+	background: rgb(var(--accentcolor_v));
 	text-shadow: 1px 1px var(--textshadow_v);
 }
 .clickable__91a9d .icon_ec85ca {
@@ -6726,11 +6814,13 @@ input.input__0f084:hover:not(:focus) {
 	background-color: rgba(var(--transparencycolor_v), .3);
 }
 
+.greyBackgroundPill_ac86f6,								/* pill					regular								*/
 .textBadge__2b1f5 {									/* textbadge				regular								*/
 	background-color: rgb(var(--accentcolor_v)) !important;
 	color: #fff !important;
 	text-shadow: 1px 1px var(--textshadow_v);
 }
+.greyBackgroundPill_ac86f6 svg,
 .textBadge__2b1f5 svg {
 	filter: drop-shadow(1px 1px var(--textshadow_v));
 }
@@ -7004,7 +7094,7 @@ img[src='/assets/387a7c504c96b992872d.svg'] {
 #app-mount ::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	border: none;
-	background-color: rgb(var(--accentcolor_v)) !important;
+	background: rgb(var(--accentcolor_v)) !important;
 }
 .none__99f8c::-webkit-scrollbar-corner,
 .none__99f8c::-webkit-scrollbar-thumb,
