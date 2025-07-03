@@ -2,7 +2,7 @@
  * @name BetterSearchPage
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.2.5
+ * @version 1.2.7
  * @description Makes the Controls in the Search Results Page sticky
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--header-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -71,10 +71,10 @@ module.exports = (_ => {
 				
 				this.css = `
 					${BDFDB.dotCN.searchresultspagination} {
-						background-color: var(--background-tertiary);
+						background-color: var(--background-base-lowest);
 					}
 					${BDFDB.dotCNS.searchresultspagination + BDFDB.dotCN.input} {
-						background-color: var(--background-floating);
+						background-color: var(--background-nested-floating);
 					}
 					${BDFDB.dotCNS.searchresultspagination + BDFDB.dotCN.paginationcontainer} {
 						margin-top: 0;
@@ -96,10 +96,10 @@ module.exports = (_ => {
 				let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {name: "SearchResultsHeader"});
 				if (index == -1) return;
 				children.splice(index + 1, 0, BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SearchResultsPagination, {
-					changePage: newPage => !e.instance.props.search.searching && BDFDB.LibraryModules.SearchPageUtils.changePage(e.instance.props.searchId, newPage - 1),
+					onPageChange: newPage => !e.instance.props.search.searching && BDFDB.LibraryModules.SearchPageUtils.changePage(e.instance.props.searchId, newPage),
 					offset: e.instance.props.search.offset,
-					totalResults: e.instance.props.search.totalResults,
-					pageLength: BDFDB.DiscordConstants.SEARCH_PAGE_SIZE
+					totalCount: e.instance.props.search.totalResults,
+					pageSize: BDFDB.DiscordConstants.SEARCH_PAGE_SIZE
 				}));
 			}
 		};
