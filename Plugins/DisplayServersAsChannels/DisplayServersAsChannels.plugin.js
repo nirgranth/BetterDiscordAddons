@@ -2,7 +2,7 @@
  * @name DisplayServersAsChannels
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.9.5
+ * @version 1.9.6
  * @description Displays Servers in a similar way as Channels
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -355,8 +355,8 @@ module.exports = (_ => {
 					}
 					if (badges.length) {
 						let insertBadges = returnvalue => {
-							if (returnvalue.props.children) (returnvalue.props.children[0] || returnvalue.props.children).props.children = [
-								(returnvalue.props.children[0] || returnvalue.props.children).props.children,
+							if (returnvalue.props.children) (returnvalue.props.children[1] || returnvalue.props.children[0] || returnvalue.props.children).props.children = [
+								(returnvalue.props.children[1] || returnvalue.props.children[0] || returnvalue.props.children).props.children,
 								badges
 							].flat(10).filter(n => n);
 							else returnvalue.props.children = [badges];
@@ -474,6 +474,7 @@ module.exports = (_ => {
 					${BDFDB.dotCNS._displayserversaschannelsstyled + BDFDB.dotCNS.guildswrapper + BDFDB.dotCN.guildpillwrapper} {
 						left: -8px;
 						transform: scaleY(calc(${this.settings.amounts.serverElementHeight}/40));
+						overflow: visible;
 					}
 					${BDFDB.dotCNS._displayserversaschannelsstyled + BDFDB.dotCNS.guildswrapper + BDFDB.dotCN.guildiconchildwrapper} {
 						width: ${this.settings.amounts.serverListWidth - 20}px;
