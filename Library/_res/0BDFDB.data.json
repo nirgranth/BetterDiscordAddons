@@ -131,6 +131,9 @@
 		}},
 		"AppUtils": {"props": ["clipboard", "os"]},
 		"ArrayUtils": {"props": ["isArrayLike", "zipObject"]},
+		"AvatarUtils": {"strings": ["avatarPlaceholderSrc:", "default.getUser"], "exported": false, "value": "exports", "map": {
+			"getAvatarProps": ["avatarPlaceholderSrc:", "default.getUser"]
+		}},
 		"CategoryCollapseUtils": {"strings": [".dispatch({type:\"CATEGORY_EXPAND\"", ".dispatch({type:\"CATEGORY_COLLAPSE\""], "exported": false, "value": "exports", "map": {
 			"categoryCollapse": [".dispatch({type:\"CATEGORY_COLLAPSE\""],
 			"categoryExpand": [".dispatch({type:\"CATEGORY_EXPAND\""]
@@ -214,9 +217,8 @@
 		"NitroUtils": {"props": ["canUseIncreasedMessageLength", "canUsePremiumGuildMemberProfile"]},
 		"NotificationSettingsUtils": {"props": ["setDesktopType", "setTTSType"]},
 		"PlatformUtils": {"props": ["isAndroid", "isWindows"]},
-		"PermissionRoleUtils": {"strings": [".roles.indexOf(", ".getMember", "excludeGuildPermissions"], "exported": false, "value": "exports", "map": {
-			"can": ["excludeGuildPermissions", "permission:"],
-			"getHighestRole": [".roles.indexOf(", ".getMember"]
+		"PermissionRoleUtils": {"strings": ["permission:", ".getMember", "excludeGuildPermissions"], "exported": false, "value": "exports", "map": {
+			"can": ["excludeGuildPermissions", "permission:"]
 		}},
 		"PreferencesContext": {"strings": ["reducedMotion", "forcedColors", "alwaysShowLinkDecorations", "createContext"], "exported": false, "value": "exports", "map": {
 			"AccessibilityPreferencesContext": ["[object Object]"]
@@ -230,9 +232,8 @@
 			"getRoleIconData": ["customIconSrc:"]
 		}},
 		"RTCConnectionUtils": {"props": ["getChannelId", "getGuildId", "getRTCConnectionId"]},
-		"SearchPageUtils": {"strings": ["dispatch({type:\"SEARCH_CLEAR_HISTORY\"", "*"], "exported": false, "value": "exports", "map": {
-			"changePage": ["*"],
-			"clearHistory": ["dispatch({type:\"SEARCH_CLEAR_HISTORY\""]
+		"SearchPageUtils": {"strings": ["SEARCH_RESULT_PAGE_CHANGED", "newPageIndex", "refreshSearch"], "exported": false, "value": "exports", "map": {
+			"changePage": ["SEARCH_RESULT_PAGE_CHANGED"]
 		}},
 		"SimpleMarkdownParser": {"props": ["parseBlock", "parseInline", "defaultOutput"]},
 		"SlateRichUtils": {"strings": ["{type:\"line\",children", "textValue:", "richValue:", "map"], "exported": false, "value": "exports", "map": {
@@ -287,7 +288,7 @@
 		"TabBar": {"props": ["Item", "Header", "Panel"]},
 		"Table": {"props": ["SortDirection", "defaultProps"]},
 		"TextArea": {"strings": ["onKeyDown", "defaultDirty"]},
-		"TextInput": {"strings": ["onFocus", "inputPrefix:", "getIsOverFlowing"]},
+		"TextInput": {"strings": ["onFocus", "defaultValue", "editable"]},
 		"TooltipContainer": {"strings": ["Tooltip cannot find DOM node", "shouldShowTooltip", "clickable"]}
 	},
 	"LibraryComponents": {
@@ -575,7 +576,7 @@
 		"SystemMessageWrapper": {"strings": ["unknown message type", "\"SystemMessage\""]},
 		"TabBar": {"props": ["Item", "Header", "Panel"]},
 		"TextChannelEmptyMessage": {"strings": ["MANAGE_CHANNELS", ".BEGINNING_CHANNEL_DESCRIPTION", "topicHook:"]},
-		"TextInput": {"strings": ["onFocus", "inputPrefix:", "getIsOverFlowing"], "noSearch": true},
+		"TextInput": {"strings": ["onFocus","defaultValue", "editable"], "noSearch": true},
 		"ThreadCard": {"strings": ["threadId:", ".container", ".threadName"]},
 		"ThreadCardDescription": {"strings": [".bullet", ".lastMessageId"]},
 		"ThreadEmptyMessage": {"strings": [",{channel:", ".name", "{channelId:", ".iconWrapper", ".icon}"]},
@@ -604,7 +605,7 @@
 		"UserPopoutHeader": {"strings": ["PRESS_VIEW_PROFILE", "PROFILE_POPOUT"], "noSearch": true},
 		"UserPopoutStatusBubble": {"strings": [".statusText,", "ringClassName", "action:\"HOVER_CUSTOM_STATUS\""], "noSearch": true},
 		"UserPopoutStatusBubbleEmpty": {"strings": [".addStatusPrompt", "PRESS_ADD_CUSTOM_STATUS"], "noSearch": true},
-		"UserProfile": {"strings": [".PROFILE_MODAL", "USER_INFO_CONNECTIONS", ".topSection"], "noSearch": true},
+		"UserProfile": {"strings": [".Provider", "themeType:", "secondaryColor"]},
 		"UserProfileHeader": {"strings": ["\"header\"", "user", "PROFILE_MODAL"], "noSearch": true},
 		"UserProfileInfoSection": {"strings": ["trackUserProfileAction:", "\"PRESS_APP_CONNECTION\"", "onUpdate"], "noSearch": true},
 		"UserProfileMutualGuilds": {"strings": ["mutualGuilds", ".listScroller", ".emptyText"]},
@@ -957,6 +958,7 @@
 			"hotkeyResetButton": "resetButton_df7f12",
 			"hotkeyWrapper": "recorder_df7f12",
 			"imageModal": "imageModal_10e0a6",
+			"inputMini": "mini_c655a8",
 			"inputNumberButton": "button_afe673",
 			"inputNumberButtonDown": "down_afe673 button_afe673",
 			"inputNumberButtonUp": "up_afe673 button_afe673",
@@ -1472,7 +1474,7 @@
 		"ImageModalMediaWrapper": {"props": ["mediaArea"]},
 		"ImageMosaic": {"props": ["lazyImg", "oneByOneGridSingle"]},
 		"ImageWrapper": {"props": ["clickable", "imageWrapperBackground"]},
-		"Input": {"props": ["inputMini", "inputDefault"]},
+		"Input": {"props": ["inputWrapper", "focused", "editable"]},
 		"Item": {"props": ["item", "side", "header"]},
 		"ItemLayerContainer": {"props": ["layer", "layerContainer"]},
 		"Layers": {"props": ["layer", "layers"]},
@@ -2405,10 +2407,10 @@
 		"imagezoom": ["ImageWrapper", "imageZoom"],
 		"itemlayer": ["ItemLayerContainer", "layer"],
 		"itemlayercontainer": ["ItemLayerContainer", "layerContainer"],
+		"itemlayercontainerclicktrap": ["ItemLayerContainer", "clickTrapContainer"],
 		"itemlayercontainerzindexdisabled": ["BDFDB", "layerContainerZIndexDisabled"],
 		"itemlayerdisabledpointerevents": ["ItemLayerContainer", "disabledPointerEvents"],
 		"input": ["Input", "input"],
-		"inputdefault": ["Input", "inputDefault"],
 		"inputdisabled": ["Input", "disabled"],
 		"inputeditable": ["Input", "editable"],
 		"inputerror": ["Input", "error"],
@@ -2417,7 +2419,7 @@
 		"inputlistdelete": ["BDFDB", "listInputDelete"],
 		"inputlistitem": ["BDFDB", "listInputItem"],
 		"inputlistitems": ["BDFDB", "listInputItems"],
-		"inputmini": ["Input", "inputMini"],
+		"inputmini": ["BDFDB", "inputMini"],
 		"inputmulti": ["BDFDB", "multiInput"],
 		"inputmultifield": ["BDFDB", "multiInputField"],
 		"inputmultifirst": ["BDFDB", "multiInputFirst"],
@@ -2430,7 +2432,6 @@
 		"inputnumberwrapper": ["BDFDB", "inputNumberWrapper"],
 		"inputnumberwrapperdefault": ["BDFDB", "inputNumberWrapperDefault"],
 		"inputnumberwrappermini": ["BDFDB", "inputNumberWrapperMini"],
-		"inputprefix": ["Input", "inputPrefix"],
 		"inputsuccess": ["BDFDB", "inputSuccess"],
 		"inputwrapper": ["Input", "inputWrapper"],
 		"invite": ["GuildInvite", "wrapper"],
