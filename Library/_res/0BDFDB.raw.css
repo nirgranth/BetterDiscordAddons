@@ -33,7 +33,7 @@ img:not([src]), img[src=""], img[src="null"] {
 	position: absolute !important;
 	z-index: unset !important;
 }
-[REPLACE_CLASS_itemlayercontainerzindexdisabled] > * {
+[REPLACE_CLASS_itemlayercontainerzindexdisabled] > *:not([REPLACE_CLASS_itemlayercontainerclicktrap]) {
 	z-index: 1002;
 }
 [REPLACE_CLASS_itemlayer] ~ [REPLACE_CLASS_itemlayer] [REPLACE_CLASS_menu] {
@@ -86,9 +86,6 @@ img:not([src]), img[src=""], img[src="null"] {
 }
 [REPLACE_CLASS_settingsrowcontainer][REPLACE_CLASS_marginbottom40] {
 	margin-bottom: 40px;
-}
-[REPLACE_CLASS_settingsrowcontainer][REPLACE_CLASS_marginbottom60] {
-	margin-bottom: 60px;
 }
 [REPLACE_CLASS_settingsrowcontainer] [REPLACE_CLASS_settingsrowlabel] {
 	align-items: center;
@@ -1225,23 +1222,6 @@ input[REPLACE_CLASS_input][REPLACE_CLASS_inputerror] {
 	border-radius: 4px;
 	box-shadow: var(--elevation-high)
 }
-[REPLACE_CLASS_colorpickerhexinputcontainer] {
-	display: flex;
-	align-items: center;
-	gap: 12px
-}
-[REPLACE_CLASS_colorpickereyedropper] {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	width: 16px;
-	height: 16px;
-	margin: 0
-}
-[REPLACE_CLASS_colorpickerhexinput] {
-	flex: 1
-}
 [REPLACE_CLASS_colorpickerrow] {
 	margin-top: 10px;
 	display: flex;
@@ -1279,9 +1259,6 @@ input[REPLACE_CLASS_input][REPLACE_CLASS_inputerror] {
 	position: absolute;
 	top: 4px;
 	right: 4px
-}
-[REPLACE_CLASS_colorpickerswatch] [REPLACE_CLASS_colorpickerswatchdropperfg] {
-	fill: var(--text-secondary)
 }
 [REPLACE_CLASS_colorpickersuggestedcolors] {
 	display: flex;
@@ -1536,9 +1513,6 @@ input[REPLACE_CLASS_input][REPLACE_CLASS_inputerror] {
 }
 [REPLACE_CLASS_colorpickerswatch][style*="background: rgb(255, 255, 255)"] {
 	border-color: var(--text-primary) !important;
-}
-[REPLACE_CLASS_colorpickerswatch][REPLACE_CLASS_colorpickerswatchnocolor] [REPLACE_CLASS_colorpickerswatchdropperfg] {
-	border-color: var(--text-muted);
 }
 [REPLACE_CLASS_colorpickerswatch]:not([REPLACE_CLASS_colorpickerswatchnocolor]):not([REPLACE_CLASS_colorpickerswatchdefault]):not([REPLACE_CLASS_colorpickerswatchdisabled]) {
 	overflow: hidden;
