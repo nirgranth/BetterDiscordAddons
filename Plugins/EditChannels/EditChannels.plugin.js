@@ -2,7 +2,7 @@
  * @name EditChannels
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 4.6.3
+ * @version 4.6.4
  * @description Allows you to locally edit Channels
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -452,11 +452,10 @@ module.exports = (_ => {
 				}
 				else if (this.settings.places.searchPopout && e.returnvalue.props.className.indexOf(BDFDB.disCN.searchpopoutoption) > -1) {
 					change = true;
-					let channel = (BDFDB.ReactUtils.findValue(e.returnvalue._owner, "result", {up: true}) || {}).channel;
+					let channel = BDFDB.ReactUtils.findValue(e.returnvalue, "channel");
 					channelId = channel && channel.id;
 					nameClass = BDFDB.disCN.searchpopoutresultchannel;
-					categoyClass = BDFDB.disCN.searchpopoutsearchresultchannelcategory;
-					iconClass = BDFDB.disCN.searchpopoutsearchresultchannelicon;
+					iconClass = BDFDB.disCN.searchpopoutresultchannelicon;
 				}
 				if (change && channelId) {
 					if (hoveredEvents) {
@@ -486,7 +485,7 @@ module.exports = (_ => {
 						name = name.props && name.props.children || name;
 						this.changeChannelColor(BDFDB.ArrayUtils.is(name) ? name.find(c => c.type == "strong") || name[0] : name, channelId, modify);
 					}
-					let icon = iconClass && BDFDB.ReactUtils.findChild(e.returnvalue, {props: [["className", iconClass]]});
+					let icon = iconClass && BDFDB.ReactUtils.findChild(e.returnvalue, {someProps:true, props: [["className", iconClass], ["iconClassName", iconClass]]});
 					if (icon) this.changeChannelIconColor(icon, channelId, modify);
 					let categoryId = (BDFDB.LibraryStores.ChannelStore.getChannel(channelId) || {}).parent_id;
 					if (categoryId) {
@@ -518,15 +517,8 @@ module.exports = (_ => {
 			processChannelItemIcon (e) {
 				if (!this.settings.places.channelList || !e.instance.props.channel) return;
 				let modify = BDFDB.ObjectUtils.extract(e.instance.props, "muted", "locked", "selected", "unread", "connected", "hovered");
-				if (e.returnvalue.props && typeof e.returnvalue.props.children == "function") {
-					let childrenRender = e.returnvalue.props.children;
-					e.returnvalue.props.children = BDFDB.TimeUtils.suppress((...args2) => {
-						let renderedChildren = childrenRender(...args2);
-						this.changeChannelIconColor(renderedChildren.props.children[2] || renderedChildren.props.children, e.instance.props.channel.id, modify);
-						return renderedChildren;
-					}, "Error in Children Render of ChannelItem!", this);
-				}
-				else this.changeChannelIconColor(e.returnvalue, e.instance.props.channel.id, modify);
+				let icon = BDFDB.ReactUtils.findChild(e.returnvalue, {props: [["color", "currentColor"]]});
+				this.changeChannelIconColor(icon, e.instance.props.channel.id, modify);
 			}
 
 			processChannelThreadItem (e) {

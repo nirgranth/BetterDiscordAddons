@@ -2,7 +2,7 @@
  * @name BetterFriendList
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.6.6
+ * @version 1.6.8
  * @description Adds extra Controls to the Friends Page, for example sort by Name/Status, Search and Amount Numbers, new Tabs
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -459,7 +459,7 @@ module.exports = (_ => {
 					let childrenRender = e.returnvalue.props.children;
 					e.returnvalue.props.children = BDFDB.TimeUtils.suppress((...args) => {
 						let returnValue = childrenRender(...args);
-						let actions = BDFDB.ReactUtils.findChild(returnValue, {filter: n => n && n.props && n.props.className && n.props.className.indexOf("actions") == 0});
+						let actions = BDFDB.ReactUtils.findChild(returnValue, {filter: n => n && n.props && n.props.className && (n.props.className.indexOf("actions_") > -1 || n.props.className.indexOf("-actions ") > -1 || n.props.className.endsWith("-actions"))});
 						if (actions && BDFDB.LibraryStores.RelationshipStore.isBlocked(e.instance.props.user.id) || BDFDB.LibraryStores.RelationshipStore.isIgnored(e.instance.props.user.id)) actions.props.children.pop();
 						if (actions && this.settings.general.addRelationshipDate && BDFDB.ArrayUtils.is(actions.props.children)) {
 							actions.props.children.unshift(BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {

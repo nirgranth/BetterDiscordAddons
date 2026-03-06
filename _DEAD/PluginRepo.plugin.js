@@ -1,10 +1,10 @@
 /**
- * @name ThemeRepo
+ * @name PluginRepo
  * @author DevilBro
  * @authorId 278543574059057154
  * @version 9.9.9
  * @description PLUGIN WAS DISCONTINUED
- * @updateUrl https://mwittrien.github.io/BetterDiscordAddons/Plugins/ThemeRepo/ThemeRepo.plugin.js
+ * @updateUrl https://mwittrien.github.io/BetterDiscordAddons/Plugins/PluginRepo/PluginRepo.plugin.js
  */
 
 module.exports = (_ => {
@@ -44,12 +44,12 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
 	} : (([Plugin, BDFDB]) => {
-		return class ThemeRepo extends Plugin {
+		return class PluginRepo extends Plugin {
 			onLoad () {}
 			
 			onStart () {
@@ -62,8 +62,8 @@ module.exports = (_ => {
 					],
 					buttons: [
 						{contents: "DELETE", close: true, color: "RED", onClick: _ => {
-							BDFDB.LibraryRequires.fs.unlink(BDFDB.LibraryRequires.path.join(BDFDB.BDUtils.getPluginsFolder(), "ThemeRepo.plugin.js"), error => {});
-							BDFDB.LibraryRequires.fs.unlink(BDFDB.LibraryRequires.path.join(BDFDB.BDUtils.getPluginsFolder(), "ThemeRepo.config.json"), error => {});
+							BDFDB.LibraryRequires.fs.unlink(BDFDB.LibraryRequires.path.join(BDFDB.BDUtils.getPluginsFolder(), "PluginRepo.plugin.js"), error => {});
+							BDFDB.LibraryRequires.fs.unlink(BDFDB.LibraryRequires.path.join(BDFDB.BDUtils.getPluginsFolder(), "PluginRepo.config.json"), error => {});
 						}}
 					]
 				});

@@ -2,7 +2,7 @@
  * @name PersonalPins
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 2.3.1
+ * @version 2.3.3
  * @description Allows you to locally pin Messages
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -184,14 +184,18 @@ module.exports = (_ => {
 								className: BDFDB.disCN.messagespopoutactionbuttons,
 								children: [
 									(!channel.guild_id || BDFDB.LibraryStores.GuildStore.getGuild(channel.guild_id)) && BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-										className: BDFDB.disCN.messagespopoutjumpbutton,
+										className: BDFDB.disCNS.buttonrevamp + BDFDB.disCNS.buttonrevampsm + BDFDB.disCNS.buttonrevampoverlayprimary + BDFDB.disCN.buttonrevamphastext,
 										onClick: _ => BDFDB.LibraryModules.HistoryUtils.transitionTo(BDFDB.DiscordConstants.Routes.CHANNEL(channel.guild_id, channel.id, message.id)),
 										children: BDFDB.ReactUtils.createElement("div", {
-											children: BDFDB.LanguageUtils.LanguageStrings.JUMP
+											className: BDFDB.disCN.buttonrevampchildrenwrapper,
+											children: BDFDB.ReactUtils.createElement("div", {
+												className: BDFDB.disCN.buttonrevampchildren,
+												children: BDFDB.LanguageUtils.LanguageStrings.JUMP
+											})
 										})
 									}),
 									BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
-										className: BDFDB.disCN.messagespopoutjumpbutton,
+										className: BDFDB.disCNS.buttonrevamp + BDFDB.disCNS.buttonrevampsm + BDFDB.disCNS.buttonrevampoverlayprimary + BDFDB.disCN.buttonrevamphastext,
 										onClick: _ => {
 											if (message.content || message.attachments.length > 1) {
 												let text = message.content || "";
@@ -203,19 +207,31 @@ module.exports = (_ => {
 											}
 										},
 										children: BDFDB.ReactUtils.createElement("div", {
-											children: BDFDB.LanguageUtils.LanguageStrings.COPY
+											className: BDFDB.disCN.buttonrevampchildrenwrapper,
+											children: BDFDB.ReactUtils.createElement("div", {
+												className: BDFDB.disCN.buttonrevampchildren,
+												children: BDFDB.LanguageUtils.LanguageStrings.COPY
+											})
 										})
 									}),
-									BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Button, {
-										look: BDFDB.LibraryComponents.Button.Looks.BLANK,
-										size: BDFDB.LibraryComponents.Button.Sizes.NONE,
+									BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Clickable, {
+										className: BDFDB.disCNS.buttonrevamp + BDFDB.disCNS.buttonrevampsm + BDFDB.disCNS.buttonrevampoverlayprimary + BDFDB.disCN.buttonrevamphastext,
 										onClick: _ => {
 											_this.removeNoteData(note);
 											BDFDB.ReactUtils.forceUpdate(this);
 										},
-										children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
-											className: BDFDB.disCN.messagespopoutclosebutton,
-											name: BDFDB.LibraryComponents.SvgIcon.Names.CLOSE
+										children: BDFDB.ReactUtils.createElement("div", {
+											className: BDFDB.disCN.buttonrevampchildrenwrapper,
+											children: BDFDB.ReactUtils.createElement("div", {
+												className: BDFDB.disCN.buttonrevampchildren,
+												children: BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SvgIcon, {
+													nativeClass: false,
+													className: BDFDB.disCN.buttonrevampicon,
+													width: 16,
+													height: 16,
+													name: BDFDB.LibraryComponents.SvgIcon.Names.CLOSE
+												})
+											})
 										})
 									})
 								]
@@ -521,7 +537,7 @@ module.exports = (_ => {
 					children.splice(index > -1 ? index + 1: 0, 0, BDFDB.ContextMenuUtils.createItem(BDFDB.LibraryComponents.MenuItems.MenuItem, {
 						label: note ? this.labels.context_unpinoption : this.labels.context_pinoption,
 						id: BDFDB.ContextMenuUtils.createItemId(this.name, note ? "unpin-note" : "pin-note"),
-						hint: hint && (_ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuHint, {
+						icon: hint && (_ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuHint, {
 							hint: hint
 						})),
 						icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {

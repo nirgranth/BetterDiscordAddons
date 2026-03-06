@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @name LastMessageDate
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.5.3
+ * @version 1.5.6
  * @description Displays the Last Message Date of a Member for the current Server/DM in the UserPopout and UserModal
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -65,7 +65,7 @@ module.exports = (_ => {
 		var loadedUsers, requestedUsers, queuedInstances;
 		var currentPopout, currentProfile;
 		
-		const LastMessageDateComponents = class LastMessageDate extends BdApi.React.Component {
+		const LastMessageDateComponent = class LastMessageDate extends BdApi.React.Component {
 			render() {
 				if (!loadedUsers[this.props.guildId]) loadedUsers[this.props.guildId] = {};
 				if (!requestedUsers[this.props.guildId]) requestedUsers[this.props.guildId] = {};
@@ -104,17 +104,17 @@ module.exports = (_ => {
 				});
 				return BDFDB.ReactUtils.createElement("section", {
 					className: BDFDB.disCN.userprofilesection,
+					onPointerDownCapture: e => { if (!e.button && channel) { e.nativeEvent.stopImmediatePropagation(); e.preventDefault(); BDFDB.LibraryModules.HistoryUtils.transitionTo(BDFDB.DiscordConstants.Routes.CHANNEL(channel.guild_id, channel.id, loadedUsers[this.props.guildId][this.props.user.id].id)); } },
 					children: [
 						BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.Heading, {
 							className: BDFDB.disCN.userprofilesectionheading,
 							variant: "text-xs/semibold",
-							style: {color: "var(--header-secondary)"},
+							style: {color: "var(--text-strong)"},
 							color: null,
 							children: _this.labels.last_message
 						}),
 						BDFDB.ReactUtils.createElement(loadedUsers[this.props.guildId][this.props.user.id] ? BDFDB.LibraryComponents.Clickable : "div", {
 							className: BDFDB.disCN.membersince,
-							onClick: _ => loadedUsers[this.props.guildId][this.props.user.id] && BDFDB.LibraryModules.HistoryUtils.transitionTo(BDFDB.DiscordConstants.Routes.CHANNEL(channel.guild_id, channel.id, loadedUsers[this.props.guildId][this.props.user.id].id)),
 							children: [
 								!channel ? icon : BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.TooltipContainer, {
 									text: channel.guild_id ? "#" + channel.name : BDFDB.LanguageUtils.LanguageStrings.DIRECT_MESSAGES,
@@ -156,8 +156,7 @@ module.exports = (_ => {
 					],
 					after: [
 						"UserHeaderUsername",
-						"UserProfile",
-						"UserProfileInfoSection"
+						"UserProfile"
 					]
 				};
 				
@@ -165,7 +164,7 @@ module.exports = (_ => {
 					${BDFDB.dotCN._lastmessagedateicon} {
 						width: 16px;
 						height: 16px;
-						color: var(--interactive-normal);
+						color: var(--text-default);
 					}
 				`;
 			}
@@ -238,17 +237,17 @@ module.exports = (_ => {
 
 			processUserThemeContainer (e) {
 				let popout = {props: e.instance.props.value || e.instance.props};
-				if (popout.props.layout == BDFDB.DiscordConstants.ProfileTypes.POPOUT) currentPopout = popout;
-				if (popout.props.layout == BDFDB.DiscordConstants.ProfileTypes.MODAL || popout.props.layout == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) currentProfile = popout;
+				if (popout.props.layout == "POPOUT" || popout.props.layout == "SIDEBAR") currentPopout = popout;
+				if (popout.props.layout == "MODAL" || popout.props.layout == "MODAL_V2") currentProfile = popout;
 			}
 
 			processUserHeaderUsername (e) {
 				let themeType = BDFDB.ObjectUtils.get(e.instance, "props.tags.props.themeType");
-				if (!currentPopout || themeType != BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && themeType != BDFDB.DiscordConstants.ProfileTypes.POPOUT || e.instance.props.className) return;
+				if (!currentPopout || themeType != "SIDEBAR" && themeType != "POPOUT" || e.instance.props.className) return;
 				let user = e.instance.props.user || BDFDB.LibraryStores.UserStore.getUser(e.instance.props.userId);
 				if (!user || user.isNonUserBot()) return;
 				e.returnvalue = [e.returnvalue].flat(10);
-				e.returnvalue.push(BDFDB.ReactUtils.createElement(LastMessageDateComponents, {
+				e.returnvalue.push(BDFDB.ReactUtils.createElement(LastMessageDateComponent, {
 					isInPopout: true,
 					guildId: currentPopout.props.guildId || BDFDB.DiscordConstants.ME,
 					channelId: currentPopout.props.channelId,
@@ -258,32 +257,17 @@ module.exports = (_ => {
 			}
 
 			processUserProfile (e) {
-				if (!currentProfile || e.instance.props.themeType != BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) return;
+				if (!currentProfile || e.instance.props.themeType != "MODAL_V2") return;
 				let user = currentProfile.props.user || BDFDB.LibraryStores.UserStore.getUser(currentProfile.props.userId);
 				if (!user || user.isNonUserBot()) return;
-				let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["heading", BDFDB.LanguageUtils.LanguageStrings.MEMBER_SINCE_PLACEHOLDER]]});
-				if (index > -1) children.splice(index, 0, BDFDB.ReactUtils.createElement(LastMessageDateComponents, {
+				let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["heading", BDFDB.LanguageUtils.LanguageStrings.MEMBER_SINCE]]});
+				if (index > -1) children.splice(index, 0, BDFDB.ReactUtils.createElement(LastMessageDateComponent, {
 					isInPopout: false,
 					guildId: currentProfile.props.guildId || BDFDB.DiscordConstants.ME,
 					channelId: currentProfile.props.channelId,
 					isGuild: !!currentProfile.props.guildId,
 					user: user
 				}, true));
-			}
-			
-			processUserProfileInfoSection (e) {
-				if (!currentProfile) return;
-				let user = e.instance.props.user || BDFDB.LibraryStores.UserStore.getUser(e.instance.props.userId);
-				if (!user || user.isNonUserBot()) return;
-				let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["heading", BDFDB.LanguageUtils.LanguageStrings.MEMBER_SINCE_PLACEHOLDER]]});
-				if (index > -1) children.splice(index, 0, BDFDB.ReactUtils.createElement(LastMessageDateComponents, {
-					isInPopout: false,
-					guildId: currentProfile.props.guildId || BDFDB.DiscordConstants.ME,
-					channelId: currentProfile.props.channelId,
-					isGuild: !!currentProfile.props.guildId,
-					user: user
-				}, true));
-
 			}
 
 			setLabelsByLanguage () {

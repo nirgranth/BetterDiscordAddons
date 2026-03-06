@@ -2,7 +2,7 @@
  * @name ServerDetails
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.3.2
+ * @version 1.3.4
  * @description Shows Server Details in the Server List Tooltip
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -85,8 +85,6 @@ module.exports = (_ => {
 				if (_this.settings.general.onlyShowOnShift) {
 					let addListener = expanded => {
 						let triggered = false, listener = event => {
-							if (!this.updater.isMounted(this)) return document.removeEventListener(expanded ? "keyup" : "keydown", listener);
-							if (triggered) return;
 							if (event.which != 16 || triggered) return;
 							triggered = true;
 							document.removeEventListener(expanded ? "keyup" : "keydown", listener);
@@ -230,6 +228,8 @@ module.exports = (_ => {
 						flex-direction: column;
 						justify-content: center;
 						align-items: center;
+						max-width: unset;
+						word-wrap: unset;
 					}
 					${BDFDB.dotCNS._serverdetailstooltip + BDFDB.dotCN._serverdetailsicon} {
 						display: flex;
@@ -241,7 +241,7 @@ module.exports = (_ => {
 					}
 					${BDFDB.dotCN._serverdetailstooltip} div${BDFDB.dotCN._serverdetailsicon} {
 						background-color: var(--background-base-low);
-						color: var(--text-secondary);
+						color: var(--text-subtle);
 						font-size: 40px;
 					}
 				`;

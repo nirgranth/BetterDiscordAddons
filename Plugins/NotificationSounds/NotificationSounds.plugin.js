@@ -2,7 +2,7 @@
  * @name NotificationSounds
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 4.0.4
+ * @version 4.0.7
  * @description Allows you to replace the native Sounds with custom Sounds
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -182,7 +182,7 @@ module.exports = (_ => {
 						globalVolume:		{value: 100,	description: "Global Notification Sounds Volume"}
 					},
 					toggles: {
-						playIfMuted: 		{value: false,	description: "Play Sounds If Muted"}
+						playIfMuted: 		{value: false,	description: "Play Sounds Of Muted Channels/Servers"}
 					}
 				};
 				
@@ -251,7 +251,14 @@ module.exports = (_ => {
 					change();
 				}
 				
-				BDFDB.PatchUtils.patch(this, BDFDB.LibraryModules.DispatchApiUtils, "dispatch", {before: e => {
+				BDFDB.PatchUtils.patch(this, BDFDB.LibraryModules.DispatchApiUtils, "dispatch", {after: e => {
+					if (BDFDB.ObjectUtils.is(e.methodArguments[0]) && (e.methodArguments[0].type == "CALL_DELETE" || e.methodArguments[0].type == "CALL_UPDATE" && !e.methodArguments[0].ringing.includes(BDFDB.UserUtils.me.id))) {
+						["call_ringing", "call_calling"].forEach(type => {
+							if (createdAudios[type]) createdAudios[type].stop();
+						});
+					}
+					
+				}, before: e => {
 					if (BDFDB.ObjectUtils.is(e.methodArguments[0]) && e.methodArguments[0].type == "MESSAGE_CREATE" && e.methodArguments[0].message) {
 						const message = e.methodArguments[0].message;
 						const guildId = message.guild_id || null;
@@ -496,7 +503,9 @@ module.exports = (_ => {
 														align: BDFDB.LibraryComponents.Flex.Align.CENTER,
 														children: n.label
 													}),
-													hint: n.hint,
+													icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuHint, {
+														hint: n.hint
+													}),
 													id: BDFDB.ContextMenuUtils.createItemId(this.name, type, n.key),
 													checked: choices[type][n.key],
 													action: state => {

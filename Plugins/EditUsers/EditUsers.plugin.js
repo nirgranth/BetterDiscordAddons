@@ -2,7 +2,7 @@
  * @name EditUsers
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 5.0.9
+ * @version 5.1.1
  * @description Allows you to locally edit Users
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -182,10 +182,12 @@ module.exports = (_ => {
 					${BDFDB.dotCNS.bottag + BDFDB.dotCN.emojiold} + span {
 						margin-left: 2px;
 					}
-					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernickname}:has(span) {
+					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernickname}:has(span),
+					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernicknamewithstyle}:has(span) {
 						text-decoration: unset !important;
 					}
-					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernickname} > span:first-child:hover {
+					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernickname} > span:first-child:hover,
+					${BDFDB.dotCNS.userheaderclickableusername + BDFDB.dotCN.userheadernicknamewithstyle} > span:first-child:hover {
 						text-decoration: underline !important;
 					}
 					${BDFDB.dotCN.message} span[style*="--edited-user-color-gradient"] ${BDFDB.dotCN.messageusername} {
@@ -197,7 +199,7 @@ module.exports = (_ => {
 					${BDFDB.dotCN.messagemarkup} span[style*="linear-gradient"] code.inline,
 					${BDFDB.dotCN.messagemarkup} span[style*="linear-gradient"] blockquote,
 					${BDFDB.dotCN.messagemarkup} span[style*="linear-gradient"] ${BDFDB.dotCN.spoilertext} {
-						color: var(--text-secondary);
+						color: var(--text-subtle);
 					}
 					${BDFDB.dotCN.mention}[style*="--edited-mention-color"] {
 						background-color: rgba(var(--edited-mention-color), .1) !important;
@@ -525,6 +527,7 @@ module.exports = (_ => {
 			}
 			
 			processDiscordTag (e) {
+				if (e.instance.props.user && e.returnvalue && e.returnvalue.props) e.returnvalue.props.user = e.instance.props.user;
 				this.processNameTag(e);
 			}
 			
@@ -533,16 +536,13 @@ module.exports = (_ => {
 				let change = false, guildId = null;
 				let tagClass = "";
 				if (e.instance.props.className) {
-					if (e.instance.props.className.indexOf(BDFDB.disCN.guildsettingsinviteusername) > -1) {
-						change = this.settings.places.guildSettings;
-					}
-					else if (e.instance.props.className.indexOf(BDFDB.disCN.peoplesdiscordtag) > -1) {
+					if (e.instance.props.className.indexOf(BDFDB.disCN.peoplesdiscordtag) > -1) {
 						change = this.settings.places.friendList;
 						tagClass = BDFDB.disCN.bottagnametag;
 					}
 				}
 				if (!change) return;
-				let username = BDFDB.ReactUtils.findChild(e.returnvalue, {props: [["className", BDFDB.disCN.username]]});
+				let username = BDFDB.ReactUtils.findChild(e.returnvalue, {props: [["className", e.instance.props.usernameClass || BDFDB.disCN.username]]});
 				if (username) this.changeUserColor(username, e.instance.props.user.id);
 				if (tagClass) this.injectBadge(e.returnvalue.props.children, e.instance.props.user.id, guildId, 2, {
 					tagClass: tagClass,
@@ -587,7 +587,7 @@ module.exports = (_ => {
 			}
 			
 			processUserHeaderAvatar (e) {
-				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && !this.settings.places.userPanel || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.POPOUT && !this.settings.places.userPopout || (e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL || e.instance.props.themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) && !this.settings.places.userProfile) return;
+				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || e.instance.props.themeType == "SIDEBAR" && !this.settings.places.userPanel || e.instance.props.themeType == "POPOUT" && !this.settings.places.userPopout || (e.instance.props.themeType == "MODAL" || e.instance.props.themeType == "MODAL_V2") && !this.settings.places.userProfile) return;
 				e.instance.props.user = this.getUserData(e.instance.props.user.id, true, true);
 				if (e.instance.props.displayProfile) {
 					let data = changedUsers[e.instance.props.user.id];
@@ -602,7 +602,7 @@ module.exports = (_ => {
 			
 			processUserHeaderUsername (e) {
 				let themeType = BDFDB.ObjectUtils.get(e.instance, "props.tags.props.themeType");
-				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || themeType == BDFDB.DiscordConstants.ProfileTypes.SIDEBAR && !this.settings.places.userPanel || themeType == BDFDB.DiscordConstants.ProfileTypes.POPOUT && !this.settings.places.userPopout || (themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL || themeType == BDFDB.DiscordConstants.ProfileTypes.MODAL_V2) && !this.settings.places.userProfile) return;
+				if (!e.instance.props.user || !changedUsers[e.instance.props.user.id] || themeType == "SIDEBAR" && !this.settings.places.userPanel || themeType == "POPOUT" && !this.settings.places.userPopout || (themeType == "MODAL" || themeType == "MODAL_V2") && !this.settings.places.userProfile) return;
 				let data = changedUsers[e.instance.props.user.id];
 				if (!e.returnvalue) {
 					let nickname = this.getUserNick(e.instance.props.user.id, e.instance.props.nickname || e.instance.props.user.globalName);
@@ -610,7 +610,15 @@ module.exports = (_ => {
 				}
 				else {
 					if (data.color1 || data.tag || data.tagEmoji) {
-						let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["className", BDFDB.disCN.userheadernickname]]});
+						let [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["textClassName", BDFDB.disCN.userheadernicknamewithstyle]]});
+						if (index > -1) children[index] = BDFDB.ReactUtils.createElement("div", {
+							className: BDFDB.DOMUtils.formatClassName(children[index].props.className, children[index].props.textClassName),
+							children: BDFDB.ReactUtils.createElement("span", {
+								className: BDFDB.DOMUtils.formatClassName(!data.color1 && BDFDB.LibraryModules.UserNameFontUtils.getClass(e.instance.props.user)),
+								children: children[index].props.userName
+							})
+						});
+						else [children, index] = BDFDB.ReactUtils.findParent(e.returnvalue, {props: [["className", BDFDB.disCN.userheadernickname]]});
 						if (index > -1) {
 							this.changeUserColor(children[index], e.instance.props.user.id);
 							if (!BDFDB.ArrayUtils.is(children[index].props.children)) children[index].props.children = [children[index].props.children].flat(10);
@@ -1289,6 +1297,7 @@ module.exports = (_ => {
 					if (BDFDB.ObjectUtils.is(child.props.style)) delete child.props.style.color;
 					if (child.props[childProp].props && BDFDB.LibraryStores.AccessibilityStore.roleStyle != "dot") delete child.props[childProp].props.color;
 					child.props[childProp] = BDFDB.ReactUtils.createElement("span", {
+						className: BDFDB.DOMUtils.formatClassName(BDFDB.LibraryModules.UserNameFontUtils.getClass(BDFDB.LibraryStores.UserStore.getUser(userId))),
 						style: {
 							color: fontGradient ? BDFDB.ColorUtils.convert(fontColor[0], "RGBA") : BDFDB.ColorUtils.convert(fontColor, "RGBA")
 						},
@@ -1788,7 +1797,7 @@ module.exports = (_ => {
 										ref: instance => {if (instance) colorPicker7 = instance;},
 										onColorChange: value => newData.color7 = value
 									})
-								}),
+								})
 							]
 						})
 					],

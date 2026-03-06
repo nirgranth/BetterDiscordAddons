@@ -2,7 +2,7 @@
  * @name BetterSearchPage
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 1.2.8
+ * @version 1.2.9
  * @description Makes the Controls in the Search Results Page sticky
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -56,7 +56,7 @@ module.exports = (_ => {
 		stop () {}
 		getSettingsPanel () {
 			let template = document.createElement("template");
-			template.innerHTML = `<div style="color: var(--text-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
+			template.innerHTML = `<div style="color: var(--text-strong); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
 			template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
 			return template.content.firstElementChild;
 		}
@@ -79,7 +79,7 @@ module.exports = (_ => {
 					${BDFDB.dotCNS.searchresultspagination + BDFDB.dotCN.paginationcontainer} {
 						margin-top: 0;
 					}
-					${BDFDB.dotCN.searchresultswrap} [role="list"] ~ ${BDFDB.dotCN.searchresultspagination} {
+					${BDFDB.dotCNS.searchresultsscroller + BDFDB.dotCN.searchresultspagination} {
 						display: none !important;
 					}
 				`;
@@ -99,7 +99,7 @@ module.exports = (_ => {
 				if (onPageChange) children.splice(index + 1, 0, BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.SearchResultsPagination, {
 					onPageChange: newPage => !e.instance.props.search.searching && onPageChange(newPage),
 					offset: e.instance.props.search.offset,
-					totalCount: e.instance.props.search.totalResults,
+					totalCount: e.instance.props.search.totalResults > 9976 ? 9976 : e.instance.props.search.totalResults,
 					pageSize: BDFDB.DiscordConstants.SEARCH_PAGE_SIZE
 				}));
 			}
